@@ -1,11 +1,11 @@
 <tos_image>
   <ident>
-    <uidhash>0D7DEE8BL</uidhash>
+    <uidhash>73006503L</uidhash>
     <hostname>networklab-Virt</hostname>
     <username>network-lab</username>
     <appname>ReceiverAppC</appname>
     <userhash>0186008EL</userhash>
-    <timestamp>5952C1F6L</timestamp>
+    <timestamp>595E5D84L</timestamp>
     <deluge_support>no</deluge_support>
     <platform>telosb</platform>
   </ident>

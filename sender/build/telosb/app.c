@@ -8166,21 +8166,21 @@ static inline void SenderC__Timer__fired(void );
 #line 97
 static inline message_t *
 SenderC__ReceiveFeedback__receive(message_t *message, void *payload, uint8_t length);
-#line 128
+#line 131
 static inline void SenderC__AMSendDQI__sendDone(message_t *message, error_t error);
-#line 145
+#line 148
 static inline void SenderC__AMSendSensor__sendDone(message_t *message, error_t error);
-#line 161
+#line 164
 static inline void SenderC__SplitControl__startDone(error_t error);
-#line 177
+#line 180
 static inline void SenderC__SplitControl__stopDone(error_t error);
-#line 190
+#line 193
 static inline uint8_t SenderC__calculatePriority(void );
-#line 271
+#line 274
 static inline void SenderC__getReading(void );
-#line 314
+#line 317
 static inline void SenderC__sendDQIMsg(void );
-#line 366
+#line 369
 static inline void SenderC__sendSensorMsg(void );
 # 408 "../../../tos/chips/msp430/msp430hardware.h"
 static inline  void __nesc_enable_interrupt(void )
@@ -12555,9 +12555,9 @@ inline static void SenderC__Leds__led2Toggle(void ){
 #line 100
 }
 #line 100
-# 128 "SenderC.nc"
+# 131 "SenderC.nc"
 static inline void SenderC__AMSendDQI__sendDone(message_t *message, error_t error)
-#line 128
+#line 131
 {
   if (&SenderC__dqiPacket == message) {
       SenderC__radioBusy = FALSE;
@@ -12618,9 +12618,9 @@ inline static void SenderC__Leds__led1Toggle(void ){
 #line 83
 }
 #line 83
-# 145 "SenderC.nc"
+# 148 "SenderC.nc"
 static inline void SenderC__AMSendSensor__sendDone(message_t *message, error_t error)
-#line 145
+#line 148
 {
   if (&SenderC__sensorPacket == message) {
       SenderC__radioBusy = FALSE;
@@ -14126,9 +14126,9 @@ inline static void * SenderC__PacketSensor__getPayload(message_t * msg, uint8_t 
 #line 126
 }
 #line 126
-# 366 "SenderC.nc"
+# 369 "SenderC.nc"
 static inline void SenderC__sendSensorMsg(void )
-#line 366
+#line 369
 {
   bool priority;
   error_t error;
@@ -14252,9 +14252,9 @@ inline static void * SenderC__PacketDQI__getPayload(message_t * msg, uint8_t len
 #line 126
 }
 #line 126
-# 314 "SenderC.nc"
+# 317 "SenderC.nc"
 static inline void SenderC__sendDQIMsg(void )
-#line 314
+#line 317
 {
   DQIMsg *msg;
   error_t error;
@@ -14401,17 +14401,17 @@ static __inline int abs(int __x)
   return __x < 0 ? -__x : __x;
 }
 
-# 190 "SenderC.nc"
+# 193 "SenderC.nc"
 static inline uint8_t SenderC__calculatePriority(void )
-#line 190
+#line 193
 {
   uint8_t priority;
   uint16_t diff0;
-#line 192
+#line 195
   uint16_t diff1;
-#line 192
+#line 195
   uint16_t diff2;
-#line 192
+#line 195
   uint16_t diff3;
 
 
@@ -14429,7 +14429,7 @@ static inline uint8_t SenderC__calculatePriority(void )
 
 
     if (
-#line 206
+#line 209
     SenderC__currentReading > SenderC__prevReading && 
     SenderC__currentReading > SenderC__nextReading && 
     SenderC__prevReading > SenderC__prevPrevReading && 
@@ -14439,7 +14439,7 @@ static inline uint8_t SenderC__calculatePriority(void )
     else {
 
       if (
-#line 212
+#line 215
       SenderC__currentReading < SenderC__prevReading && 
       SenderC__currentReading < SenderC__nextReading && 
       SenderC__prevReading < SenderC__prevPrevReading && 
@@ -14452,12 +14452,12 @@ static inline uint8_t SenderC__calculatePriority(void )
             priority = 1;
           }
         else {
-#line 223
+#line 226
           if (SenderC__currentReading >= SenderC__prevReading && SenderC__currentReading > SenderC__nextReading) {
               priority = 1;
             }
           else {
-#line 226
+#line 229
             if (SenderC__currentReading > SenderC__prevReading && SenderC__currentReading >= SenderC__nextReading) {
                 priority = 1;
               }
@@ -14467,12 +14467,12 @@ static inline uint8_t SenderC__calculatePriority(void )
                   priority = 1;
                 }
               else {
-#line 234
+#line 237
                 if (SenderC__currentReading <= SenderC__prevReading && SenderC__currentReading < SenderC__nextReading) {
                     priority = 1;
                   }
                 else {
-#line 237
+#line 240
                   if (SenderC__currentReading < SenderC__prevReading && SenderC__currentReading <= SenderC__nextReading) {
                       priority = 1;
                     }
@@ -14482,7 +14482,7 @@ static inline uint8_t SenderC__calculatePriority(void )
                         priority = 2;
                       }
                     else {
-#line 245
+#line 248
                       if (diff1 > diff0 && diff2 > diff3) {
                           priority = 2;
                         }
@@ -14492,7 +14492,7 @@ static inline uint8_t SenderC__calculatePriority(void )
                             priority = 3;
                           }
                         else {
-#line 253
+#line 256
                           if (diff1 > 2 * diff0 && diff1 > 2 * diff2) {
                               priority = 3;
                             }
@@ -14513,7 +14513,7 @@ static inline uint8_t SenderC__calculatePriority(void )
         }
       }
     }
-#line 263
+#line 266
   return priority;
 }
 
@@ -14523,7 +14523,7 @@ static inline uint8_t SenderC__calculatePriority(void )
 
 
 static inline void SenderC__getReading(void )
-#line 271
+#line 274
 {
   sample s;
   uint8_t priority;
@@ -14885,12 +14885,15 @@ SenderC__ReceiveFeedback__receive(message_t *message, void *payload, uint8_t len
       msg = (FeedbackMsg *)payload;
 
 
-      if (__nesc_ntoh_uint16(msg->feedback.nxdata) == 1) {
-          SenderC__priorityCutoff++;
+      if (__nesc_ntoh_uint16(msg->sensorId.nxdata) == TOS_NODE_ID) {
+
+          if (__nesc_ntoh_uint16(msg->feedback.nxdata) == 1) {
+              SenderC__priorityCutoff++;
+            }
+
+
+          SenderC__Leds__led0Toggle();
         }
-
-
-      SenderC__Leds__led0Toggle();
     }
 
   return message;
@@ -17457,9 +17460,9 @@ static inline void CC2420CsmaP__sendDone_task__runTask(void )
   CC2420CsmaP__Send__sendDone(CC2420CsmaP__m_msg, packetErr);
 }
 
-# 177 "SenderC.nc"
+# 180 "SenderC.nc"
 static inline void SenderC__SplitControl__stopDone(error_t error)
-#line 177
+#line 180
 {
 }
 
@@ -17533,9 +17536,9 @@ inline static void SenderC__Timer__startPeriodic(uint32_t dt){
 #line 64
 }
 #line 64
-# 161 "SenderC.nc"
+# 164 "SenderC.nc"
 static inline void SenderC__SplitControl__startDone(error_t error)
-#line 161
+#line 164
 {
   if (error == SUCCESS) {
       SenderC__Timer__startPeriodic(50);

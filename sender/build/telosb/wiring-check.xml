@@ -14,7 +14,7 @@
     </wire>
     <wire loc="64:../../../tos/system/AMSenderC.nc">
       <from><interface-ref name="AMSend" scoped="" ref="0x41143e78"/></from>
-      <to><interface-ref name="AMSend" scoped="" ref="0x416a1b70"/></to>
+      <to><interface-ref name="AMSend" scoped="" ref="0x416a0b70"/></to>
     </wire>
     <wire loc="20:SenderAppC.nc">
       <from><interface-ref name="Boot" scoped="" ref="0x41174af8"/></from>
@@ -74,10 +74,10 @@
     </wire>
     <wire loc="26:SenderAppC.nc">
       <from><interface-ref name="Timer" scoped="" ref="0x41170620"/></from>
-      <to><interface-ref name="Timer" scoped="" ref="0x4113fa60"/></to>
+      <to><interface-ref name="Timer" scoped="" ref="0x4113fef8"/></to>
     </wire>
     <wire loc="52:../../../tos/system/TimerMilliC.nc">
-      <from><interface-ref name="Timer" scoped="" ref="0x4113fa60"/></from>
+      <from><interface-ref name="Timer" scoped="" ref="0x4113fef8"/></from>
       <to><interface-ref name="TimerMilli" scoped="" ref="0x40fb6a60"/>
       <arguments>
         <value cst="I:1">
@@ -1236,34 +1236,34 @@
     </wire>
     <wire loc="51:../../../tos/platforms/telosa/chips/cc2420/HplCC2420AlarmC.nc">
       <from><interface-ref name="Init" scoped="" ref="0x40882258"/></from>
-      <to><interface-ref name="Init" scoped="" ref="0x41299ad0"/></to>
+      <to><interface-ref name="Init" scoped="" ref="0x41299ee0"/></to>
     </wire>
     <wire loc="52:../../../tos/platforms/telosa/chips/cc2420/HplCC2420AlarmC.nc">
       <from><interface-ref name="Alarm32khz32" scoped="" ref="0x408826d0"/></from>
-      <to><interface-ref name="Alarm" scoped="" ref="0x41299f28"/></to>
+      <to><interface-ref name="Alarm" scoped="" ref="0x41298360"/></to>
     </wire>
     <wire loc="52:../../../tos/chips/msp430/timer/Alarm32khz32C.nc">
-      <from><interface-ref name="Init" scoped="" ref="0x41299ad0"/></from>
-      <to><interface-ref name="Init" scoped="" ref="0x41295b78"/></to>
+      <from><interface-ref name="Init" scoped="" ref="0x41299ee0"/></from>
+      <to><interface-ref name="Init" scoped="" ref="0x41294010"/></to>
     </wire>
     <wire loc="53:../../../tos/chips/msp430/timer/Alarm32khz32C.nc">
-      <from><interface-ref name="Alarm" scoped="" ref="0x41299f28"/></from>
-      <to><interface-ref name="Alarm" scoped="" ref="0x41292a38"/></to>
+      <from><interface-ref name="Alarm" scoped="" ref="0x41298360"/></from>
+      <to><interface-ref name="Alarm" scoped="" ref="0x41291e88"/></to>
     </wire>
     <wire loc="51:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
-      <from><interface-ref name="Init" scoped="" ref="0x41295b78"/></from>
-      <to><interface-ref name="Init" scoped="" ref="0x412ca628"/></to>
+      <from><interface-ref name="Init" scoped="" ref="0x41294010"/></from>
+      <to><interface-ref name="Init" scoped="" ref="0x412ca8c8"/></to>
     </wire>
     <wire loc="55:../../../tos/chips/msp430/timer/Alarm32khz32C.nc">
-      <from><interface-ref name="AlarmFrom" scoped="" ref="0x4128e870"/></from>
-      <to><interface-ref name="Alarm" scoped="" ref="0x41294010"/></to>
+      <from><interface-ref name="AlarmFrom" scoped="" ref="0x4128eb90"/></from>
+      <to><interface-ref name="Alarm" scoped="" ref="0x41294468"/></to>
     </wire>
     <wire loc="52:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
-      <from><interface-ref name="Alarm" scoped="" ref="0x41294010"/></from>
-      <to><interface-ref name="Alarm" scoped="" ref="0x412caaa0"/></to>
+      <from><interface-ref name="Alarm" scoped="" ref="0x41294468"/></from>
+      <to><interface-ref name="Alarm" scoped="" ref="0x412cad40"/></to>
     </wire>
     <wire loc="56:../../../tos/chips/msp430/timer/Alarm32khz32C.nc">
-      <from><interface-ref name="Counter" scoped="" ref="0x4128f5d8"/></from>
+      <from><interface-ref name="Counter" scoped="" ref="0x4128f950"/></from>
       <to><interface-ref name="Counter" scoped="" ref="0x408af088"/></to>
     </wire>
     <wire loc="50:../../../tos/chips/msp430/timer/Counter32khz32C.nc">
@@ -1271,11 +1271,11 @@
       <to><interface-ref name="Counter" scoped="" ref="0x408d5320"/></to>
     </wire>
     <wire loc="54:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
-      <from><interface-ref name="Msp430Timer" scoped="" ref="0x412c84b8"/></from>
-      <to><interface-ref name="Msp430Timer" scoped="" ref="0x412cda90"/></to>
+      <from><interface-ref name="Msp430Timer" scoped="" ref="0x412c76b0"/></from>
+      <to><interface-ref name="Msp430Timer" scoped="" ref="0x412cdd50"/></to>
     </wire>
     <wire loc="49:../../../tos/chips/msp430/timer/Msp430Timer32khzC.nc">
-      <from><interface-ref name="Msp430Timer" scoped="" ref="0x412cda90"/></from>
+      <from><interface-ref name="Msp430Timer" scoped="" ref="0x412cdd50"/></from>
       <to><interface-ref name="Msp430Timer" scoped="" ref="0x4088a8e8"/>
       <arguments>
         <value cst="I:0">
@@ -1285,11 +1285,11 @@
       </to>
     </wire>
     <wire loc="55:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
-      <from><interface-ref name="Msp430TimerControl" scoped="" ref="0x412c6170"/></from>
-      <to><interface-ref name="Msp430TimerControl" scoped="" ref="0x412cc6b0"/></to>
+      <from><interface-ref name="Msp430TimerControl" scoped="" ref="0x412c6330"/></from>
+      <to><interface-ref name="Msp430TimerControl" scoped="" ref="0x412cc958"/></to>
     </wire>
     <wire loc="50:../../../tos/chips/msp430/timer/Msp430Timer32khzC.nc">
-      <from><interface-ref name="Msp430TimerControl" scoped="" ref="0x412cc6b0"/></from>
+      <from><interface-ref name="Msp430TimerControl" scoped="" ref="0x412cc958"/></from>
       <to><interface-ref name="Msp430TimerControl" scoped="" ref="0x40887890"/>
       <arguments>
         <value cst="I:0">
@@ -1299,11 +1299,11 @@
       </to>
     </wire>
     <wire loc="56:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
-      <from><interface-ref name="Msp430Compare" scoped="" ref="0x412c6ba8"/></from>
-      <to><interface-ref name="Msp430Compare" scoped="" ref="0x412cb170"/></to>
+      <from><interface-ref name="Msp430Compare" scoped="" ref="0x412c6d68"/></from>
+      <to><interface-ref name="Msp430Compare" scoped="" ref="0x412cb410"/></to>
     </wire>
     <wire loc="51:../../../tos/chips/msp430/timer/Msp430Timer32khzC.nc">
-      <from><interface-ref name="Msp430Compare" scoped="" ref="0x412cb170"/></from>
+      <from><interface-ref name="Msp430Compare" scoped="" ref="0x412cb410"/></from>
       <to><interface-ref name="Msp430Compare" scoped="" ref="0x40886698"/>
       <arguments>
         <value cst="I:0">
@@ -2454,7 +2454,7 @@
     </wire>
     <wire loc="52:../../../tos/platforms/telosa/chips/cc2420/HplCC2420SpiC.nc">
       <from><interface-ref name="Resource" scoped="" ref="0x40b551d0"/></from>
-      <to><interface-ref name="Resource" scoped="" ref="0x414f7590"/></to>
+      <to><interface-ref name="Resource" scoped="" ref="0x414f6590"/></to>
     </wire>
     <wire loc="63:../../../tos/chips/cc2420/spi/CC2420SpiWireC.nc">
       <from><interface-ref name="SpiByte" scoped="" ref="0x40b27d18"/></from>
@@ -2505,7 +2505,7 @@
       <to><interface-ref name="SpiByte" scoped="" ref="0x40ba9060"/></to>
     </wire>
     <wire loc="105:../../../tos/chips/msp430/usart/Msp430Spi0C.nc">
-      <from><interface-ref name="Resource" scoped="" ref="0x414f7590"/></from>
+      <from><interface-ref name="Resource" scoped="" ref="0x414f6590"/></from>
       <to><interface-ref name="Resource" scoped="" ref="0x40baa258"/>
       <arguments>
         <value cst="I:0">
@@ -2515,7 +2515,7 @@
       </to>
     </wire>
     <wire loc="114:../../../tos/chips/msp430/usart/Msp430Spi0C.nc">
-      <from><interface-ref name="ResourceRequested" scoped="" ref="0x414f7c48"/></from>
+      <from><interface-ref name="ResourceRequested" scoped="" ref="0x414f6c48"/></from>
       <to><interface-ref name="ResourceRequested" scoped="" ref="0x414f1af8"/></to>
     </wire>
     <wire loc="64:../../../tos/chips/msp430/usart/Msp430Usart0C.nc">
@@ -5106,7 +5106,7 @@
     </wire>
     <wire loc="52:../../../tos/chips/msp430/timer/AlarmMilli32C.nc">
       <from><interface-ref name="Init" scoped="" ref="0x40f453c0"/></from>
-      <to><interface-ref name="Init" scoped="" ref="0x415a37d8"/></to>
+      <to><interface-ref name="Init" scoped="" ref="0x415a27d8"/></to>
     </wire>
     <wire loc="61:../../../tos/chips/msp430/timer/HilTimerMilliC.nc">
       <from><interface-ref name="TimerFrom" scoped="" ref="0x40fc35a0"/></from>
@@ -5129,15 +5129,15 @@
       <to><interface-ref name="Counter" scoped="" ref="0x40f701a0"/></to>
     </wire>
     <wire loc="51:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
-      <from><interface-ref name="Init" scoped="" ref="0x415a37d8"/></from>
+      <from><interface-ref name="Init" scoped="" ref="0x415a27d8"/></from>
       <to><interface-ref name="Init" scoped="" ref="0x415f4060"/></to>
     </wire>
     <wire loc="55:../../../tos/chips/msp430/timer/AlarmMilli32C.nc">
       <from><interface-ref name="AlarmFrom" scoped="" ref="0x415fc3b8"/></from>
-      <to><interface-ref name="Alarm" scoped="" ref="0x415a3c30"/></to>
+      <to><interface-ref name="Alarm" scoped="" ref="0x415a2c30"/></to>
     </wire>
     <wire loc="52:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
-      <from><interface-ref name="Alarm" scoped="" ref="0x415a3c30"/></from>
+      <from><interface-ref name="Alarm" scoped="" ref="0x415a2c30"/></from>
       <to><interface-ref name="Alarm" scoped="" ref="0x415f44d8"/></to>
     </wire>
     <wire loc="56:../../../tos/chips/msp430/timer/AlarmMilli32C.nc">
@@ -5159,7 +5159,7 @@
       </to>
     </wire>
     <wire loc="55:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
-      <from><interface-ref name="Msp430TimerControl" scoped="" ref="0x415f2a70"/></from>
+      <from><interface-ref name="Msp430TimerControl" scoped="" ref="0x415f1a70"/></from>
       <to><interface-ref name="Msp430TimerControl" scoped="" ref="0x415f6090"/></to>
     </wire>
     <wire loc="50:../../../tos/chips/msp430/timer/Msp430Timer32khzC.nc">
@@ -5905,7 +5905,7 @@
       </to>
     </wire>
     <wire loc="63:../../../tos/system/DirectAMSenderC.nc">
-      <from><interface-ref name="AMSend" scoped="" ref="0x416a1b70"/></from>
+      <from><interface-ref name="AMSend" scoped="" ref="0x416a0b70"/></from>
       <to><interface-ref name="AMSend" scoped="" ref="0x416974a8"/></to>
     </wire>
     <wire loc="64:../../../tos/system/DirectAMSenderC.nc">
@@ -5939,7 +5939,7 @@
       </to>
     </wire>
     <wire loc="61:../../../tos/system/DirectAMSenderC.nc">
-      <from><interface-ref name="AMPacket" scoped="" ref="0x41696230"/></from>
+      <from><interface-ref name="AMPacket" scoped="" ref="0x41695230"/></from>
       <to><interface-ref name="AMPacket" scoped="" ref="0x4066d140"/></to>
     </wire>
   </wiring>
@@ -12424,9 +12424,9 @@
         <function-ref name="stop" scoped="" ref="0x408810d8"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Alarm" ref="0x41299f28" loc="44:../../../tos/chips/msp430/timer/Alarm32khz32C.nc">
+    <interface provided="1" name="Alarm" ref="0x41298360" loc="44:../../../tos/chips/msp430/timer/Alarm32khz32C.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Alarm" scoped="" ref="0x41299f28"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Alarm" scoped="" ref="0x41298360"/></type-interface>
       <instance>
         <interfacedef-ref qname="Alarm"/>
         <arguments>
@@ -12439,28 +12439,28 @@
         </arguments>
       </instance>
       <interface-functions>
-        <function-ref name="getNow" scoped="" ref="0x412973e8"/>
-        <function-ref name="fired" scoped="" ref="0x41298ba0"/>
-        <function-ref name="startAt" scoped="" ref="0x412970a8"/>
-        <function-ref name="isRunning" scoped="" ref="0x41298e18"/>
-        <function-ref name="getAlarm" scoped="" ref="0x41297660"/>
-        <function-ref name="start" scoped="" ref="0x41298688"/>
-        <function-ref name="stop" scoped="" ref="0x41298928"/>
+        <function-ref name="getNow" scoped="" ref="0x41297840"/>
+        <function-ref name="fired" scoped="" ref="0x41297010"/>
+        <function-ref name="startAt" scoped="" ref="0x41297500"/>
+        <function-ref name="isRunning" scoped="" ref="0x41297288"/>
+        <function-ref name="getAlarm" scoped="" ref="0x41297ab8"/>
+        <function-ref name="start" scoped="" ref="0x41298ab0"/>
+        <function-ref name="stop" scoped="" ref="0x41298d50"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Init" ref="0x41299ad0" loc="43:../../../tos/chips/msp430/timer/Alarm32khz32C.nc">
+    <interface provided="1" name="Init" ref="0x41299ee0" loc="43:../../../tos/chips/msp430/timer/Alarm32khz32C.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Init" scoped="" ref="0x41299ad0"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Init" scoped="" ref="0x41299ee0"/></type-interface>
       <instance>
         <interfacedef-ref qname="Init"/>
       </instance>
       <interface-functions>
-        <function-ref name="init" scoped="" ref="0x41299ca8"/>
+        <function-ref name="init" scoped="" ref="0x412980e0"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Alarm" ref="0x41294010" loc="44:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
+    <interface provided="1" name="Alarm" ref="0x41294468" loc="44:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.AlarmC"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Alarm" scoped="" ref="0x41294010"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Alarm" scoped="" ref="0x41294468"/></type-interface>
       <instance>
         <interfacedef-ref qname="Alarm"/>
         <arguments>
@@ -12473,75 +12473,75 @@
         </arguments>
       </instance>
       <interface-functions>
-        <function-ref name="getNow" scoped="" ref="0x412934e0"/>
-        <function-ref name="fired" scoped="" ref="0x41294c78"/>
-        <function-ref name="startAt" scoped="" ref="0x412931a0"/>
-        <function-ref name="isRunning" scoped="" ref="0x41294ef0"/>
-        <function-ref name="getAlarm" scoped="" ref="0x41293758"/>
-        <function-ref name="start" scoped="" ref="0x41294760"/>
-        <function-ref name="stop" scoped="" ref="0x41294a00"/>
+        <function-ref name="getNow" scoped="" ref="0x41293940"/>
+        <function-ref name="fired" scoped="" ref="0x41293110"/>
+        <function-ref name="startAt" scoped="" ref="0x41293600"/>
+        <function-ref name="isRunning" scoped="" ref="0x41293388"/>
+        <function-ref name="getAlarm" scoped="" ref="0x41293bb8"/>
+        <function-ref name="start" scoped="" ref="0x41294bb8"/>
+        <function-ref name="stop" scoped="" ref="0x41294e58"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Init" ref="0x41295b78" loc="43:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
+    <interface provided="1" name="Init" ref="0x41294010" loc="43:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.AlarmC"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Init" scoped="" ref="0x41295b78"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Init" scoped="" ref="0x41294010"/></type-interface>
       <instance>
         <interfacedef-ref qname="Init"/>
       </instance>
       <interface-functions>
-        <function-ref name="init" scoped="" ref="0x41295d50"/>
+        <function-ref name="init" scoped="" ref="0x412941e8"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Msp430Compare" ref="0x412cb170" loc="41:../../../tos/chips/msp430/timer/Msp430Timer32khzC.nc">
+    <interface provided="1" name="Msp430Compare" ref="0x412cb410" loc="41:../../../tos/chips/msp430/timer/Msp430Timer32khzC.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.AlarmC.Msp430Timer"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430Compare" scoped="" ref="0x412cb170"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430Compare" scoped="" ref="0x412cb410"/></type-interface>
       <instance>
         <interfacedef-ref qname="Msp430Compare"/>
       </instance>
       <interface-functions>
-        <function-ref name="getEvent" scoped="" ref="0x412cb348"/>
-        <function-ref name="setEvent" scoped="" ref="0x412cb428"/>
-        <function-ref name="setEventFromPrev" scoped="" ref="0x412cb508"/>
-        <function-ref name="setEventFromNow" scoped="" ref="0x412cb5e8"/>
-        <function-ref name="fired" scoped="" ref="0x412cb6c8"/>
+        <function-ref name="getEvent" scoped="" ref="0x412cb5e8"/>
+        <function-ref name="setEvent" scoped="" ref="0x412cb6c8"/>
+        <function-ref name="setEventFromPrev" scoped="" ref="0x412cb7a8"/>
+        <function-ref name="setEventFromNow" scoped="" ref="0x412cb888"/>
+        <function-ref name="fired" scoped="" ref="0x412cb968"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Msp430Timer" ref="0x412cda90" loc="39:../../../tos/chips/msp430/timer/Msp430Timer32khzC.nc">
+    <interface provided="1" name="Msp430Timer" ref="0x412cdd50" loc="39:../../../tos/chips/msp430/timer/Msp430Timer32khzC.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.AlarmC.Msp430Timer"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430Timer" scoped="" ref="0x412cda90"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430Timer" scoped="" ref="0x412cdd50"/></type-interface>
       <instance>
         <interfacedef-ref qname="Msp430Timer"/>
       </instance>
       <interface-functions>
-        <function-ref name="clear" scoped="" ref="0x412cdc68"/>
-        <function-ref name="setClockSource" scoped="" ref="0x412cdd48"/>
-        <function-ref name="enableEvents" scoped="" ref="0x412cde28"/>
-        <function-ref name="get" scoped="" ref="0x412cdf08"/>
-        <function-ref name="disableEvents" scoped="" ref="0x412cc010"/>
-        <function-ref name="clearOverflow" scoped="" ref="0x412cc0f0"/>
-        <function-ref name="getMode" scoped="" ref="0x412cc1d0"/>
-        <function-ref name="isOverflowPending" scoped="" ref="0x412cc2b0"/>
-        <function-ref name="overflow" scoped="" ref="0x412cc390"/>
-        <function-ref name="setMode" scoped="" ref="0x412cc470"/>
-        <function-ref name="setInputDivider" scoped="" ref="0x412cc550"/>
+        <function-ref name="clear" scoped="" ref="0x412cdf28"/>
+        <function-ref name="setClockSource" scoped="" ref="0x412cc018"/>
+        <function-ref name="enableEvents" scoped="" ref="0x412cc0f8"/>
+        <function-ref name="get" scoped="" ref="0x412cc1d8"/>
+        <function-ref name="disableEvents" scoped="" ref="0x412cc2b8"/>
+        <function-ref name="clearOverflow" scoped="" ref="0x412cc398"/>
+        <function-ref name="getMode" scoped="" ref="0x412cc478"/>
+        <function-ref name="isOverflowPending" scoped="" ref="0x412cc558"/>
+        <function-ref name="overflow" scoped="" ref="0x412cc638"/>
+        <function-ref name="setMode" scoped="" ref="0x412cc718"/>
+        <function-ref name="setInputDivider" scoped="" ref="0x412cc7f8"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Msp430TimerControl" ref="0x412cc6b0" loc="40:../../../tos/chips/msp430/timer/Msp430Timer32khzC.nc">
+    <interface provided="1" name="Msp430TimerControl" ref="0x412cc958" loc="40:../../../tos/chips/msp430/timer/Msp430Timer32khzC.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.AlarmC.Msp430Timer"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430TimerControl" scoped="" ref="0x412cc6b0"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430TimerControl" scoped="" ref="0x412cc958"/></type-interface>
       <instance>
         <interfacedef-ref qname="Msp430TimerControl"/>
       </instance>
       <interface-functions>
-        <function-ref name="setControlAsCapture" scoped="" ref="0x412cc888"/>
-        <function-ref name="getControl" scoped="" ref="0x412cc968"/>
-        <function-ref name="enableEvents" scoped="" ref="0x412cca48"/>
-        <function-ref name="areEventsEnabled" scoped="" ref="0x412ccb28"/>
-        <function-ref name="setControlAsCompare" scoped="" ref="0x412ccc08"/>
-        <function-ref name="disableEvents" scoped="" ref="0x412ccce8"/>
-        <function-ref name="isInterruptPending" scoped="" ref="0x412ccdc8"/>
-        <function-ref name="clearPendingInterrupt" scoped="" ref="0x412ccea8"/>
-        <function-ref name="setControl" scoped="" ref="0x412cb010"/>
+        <function-ref name="setControlAsCapture" scoped="" ref="0x412ccb30"/>
+        <function-ref name="getControl" scoped="" ref="0x412ccc10"/>
+        <function-ref name="enableEvents" scoped="" ref="0x412cccf0"/>
+        <function-ref name="areEventsEnabled" scoped="" ref="0x412ccdd0"/>
+        <function-ref name="setControlAsCompare" scoped="" ref="0x412cceb0"/>
+        <function-ref name="disableEvents" scoped="" ref="0x412cb010"/>
+        <function-ref name="isInterruptPending" scoped="" ref="0x412cb0f0"/>
+        <function-ref name="clearPendingInterrupt" scoped="" ref="0x412cb1d0"/>
+        <function-ref name="setControl" scoped="" ref="0x412cb2b0"/>
       </interface-functions>
     </interface>
     <interface provided="1" name="Msp430Compare" ref="0x40886698" loc="52:../../../tos/platforms/telosa/Msp430Timer32khzMapC.nc">
@@ -12611,43 +12611,43 @@
         <function-ref name="setControl" scoped="" ref="0x408861d0"/>
       </interface-functions>
     </interface>
-    <interface provided="0" name="Msp430Compare" ref="0x412c6ba8" loc="49:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
+    <interface provided="0" name="Msp430Compare" ref="0x412c6d68" loc="49:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.AlarmC.Msp430Alarm"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430Compare" scoped="" ref="0x412c6ba8"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430Compare" scoped="" ref="0x412c6d68"/></type-interface>
       <instance>
         <interfacedef-ref qname="Msp430Compare"/>
       </instance>
       <interface-functions>
-        <function-ref name="getEvent" scoped="" ref="0x412c6d80"/>
-        <function-ref name="setEvent" scoped="" ref="0x412c6e60"/>
-        <function-ref name="setEventFromPrev" scoped="" ref="0x412c5010"/>
-        <function-ref name="setEventFromNow" scoped="" ref="0x412c50f0"/>
-        <function-ref name="fired" scoped="" ref="0x412c51d0"/>
+        <function-ref name="getEvent" scoped="" ref="0x412c5010"/>
+        <function-ref name="setEvent" scoped="" ref="0x412c50f0"/>
+        <function-ref name="setEventFromPrev" scoped="" ref="0x412c51d0"/>
+        <function-ref name="setEventFromNow" scoped="" ref="0x412c52b0"/>
+        <function-ref name="fired" scoped="" ref="0x412c5390"/>
       </interface-functions>
     </interface>
-    <interface provided="0" name="Msp430Timer" ref="0x412c84b8" loc="47:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
+    <interface provided="0" name="Msp430Timer" ref="0x412c76b0" loc="47:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.AlarmC.Msp430Alarm"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430Timer" scoped="" ref="0x412c84b8"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430Timer" scoped="" ref="0x412c76b0"/></type-interface>
       <instance>
         <interfacedef-ref qname="Msp430Timer"/>
       </instance>
       <interface-functions>
-        <function-ref name="clear" scoped="" ref="0x412c8690"/>
-        <function-ref name="setClockSource" scoped="" ref="0x412c8770"/>
-        <function-ref name="enableEvents" scoped="" ref="0x412c8850"/>
-        <function-ref name="get" scoped="" ref="0x412c8930"/>
-        <function-ref name="disableEvents" scoped="" ref="0x412c8a10"/>
-        <function-ref name="clearOverflow" scoped="" ref="0x412c8af0"/>
-        <function-ref name="getMode" scoped="" ref="0x412c8bd0"/>
-        <function-ref name="isOverflowPending" scoped="" ref="0x412c8cb0"/>
-        <function-ref name="overflow" scoped="" ref="0x412c8d90"/>
-        <function-ref name="setMode" scoped="" ref="0x412c8e70"/>
-        <function-ref name="setInputDivider" scoped="" ref="0x412c6010"/>
+        <function-ref name="clear" scoped="" ref="0x412c7888"/>
+        <function-ref name="setClockSource" scoped="" ref="0x412c7968"/>
+        <function-ref name="enableEvents" scoped="" ref="0x412c7a48"/>
+        <function-ref name="get" scoped="" ref="0x412c7b28"/>
+        <function-ref name="disableEvents" scoped="" ref="0x412c7c08"/>
+        <function-ref name="clearOverflow" scoped="" ref="0x412c7ce8"/>
+        <function-ref name="getMode" scoped="" ref="0x412c7dc8"/>
+        <function-ref name="isOverflowPending" scoped="" ref="0x412c7ea8"/>
+        <function-ref name="overflow" scoped="" ref="0x412c6010"/>
+        <function-ref name="setMode" scoped="" ref="0x412c60f0"/>
+        <function-ref name="setInputDivider" scoped="" ref="0x412c61d0"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Alarm" ref="0x412caaa0" loc="46:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
+    <interface provided="1" name="Alarm" ref="0x412cad40" loc="46:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.AlarmC.Msp430Alarm"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Alarm" scoped="" ref="0x412caaa0"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Alarm" scoped="" ref="0x412cad40"/></type-interface>
       <instance>
         <interfacedef-ref qname="Alarm"/>
         <arguments>
@@ -12660,41 +12660,41 @@
         </arguments>
       </instance>
       <interface-functions>
-        <function-ref name="getNow" scoped="" ref="0x412c8010"/>
-        <function-ref name="fired" scoped="" ref="0x412c9718"/>
-        <function-ref name="startAt" scoped="" ref="0x412c9c08"/>
-        <function-ref name="isRunning" scoped="" ref="0x412c9990"/>
-        <function-ref name="getAlarm" scoped="" ref="0x412c8288"/>
-        <function-ref name="start" scoped="" ref="0x412c9200"/>
-        <function-ref name="stop" scoped="" ref="0x412c94a0"/>
+        <function-ref name="getNow" scoped="" ref="0x412c7208"/>
+        <function-ref name="fired" scoped="" ref="0x412c99c0"/>
+        <function-ref name="startAt" scoped="" ref="0x412c9eb0"/>
+        <function-ref name="isRunning" scoped="" ref="0x412c9c38"/>
+        <function-ref name="getAlarm" scoped="" ref="0x412c7480"/>
+        <function-ref name="start" scoped="" ref="0x412c94a8"/>
+        <function-ref name="stop" scoped="" ref="0x412c9748"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Init" ref="0x412ca628" loc="45:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
+    <interface provided="1" name="Init" ref="0x412ca8c8" loc="45:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.AlarmC.Msp430Alarm"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Init" scoped="" ref="0x412ca628"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Init" scoped="" ref="0x412ca8c8"/></type-interface>
       <instance>
         <interfacedef-ref qname="Init"/>
       </instance>
       <interface-functions>
-        <function-ref name="init" scoped="" ref="0x412ca800"/>
+        <function-ref name="init" scoped="" ref="0x412caaa0"/>
       </interface-functions>
     </interface>
-    <interface provided="0" name="Msp430TimerControl" ref="0x412c6170" loc="48:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
+    <interface provided="0" name="Msp430TimerControl" ref="0x412c6330" loc="48:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.AlarmC.Msp430Alarm"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430TimerControl" scoped="" ref="0x412c6170"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430TimerControl" scoped="" ref="0x412c6330"/></type-interface>
       <instance>
         <interfacedef-ref qname="Msp430TimerControl"/>
       </instance>
       <interface-functions>
-        <function-ref name="setControlAsCapture" scoped="" ref="0x412c6348"/>
-        <function-ref name="getControl" scoped="" ref="0x412c6428"/>
-        <function-ref name="enableEvents" scoped="" ref="0x412c6508"/>
-        <function-ref name="areEventsEnabled" scoped="" ref="0x412c65e8"/>
-        <function-ref name="setControlAsCompare" scoped="" ref="0x412c66c8"/>
-        <function-ref name="disableEvents" scoped="" ref="0x412c67a8"/>
-        <function-ref name="isInterruptPending" scoped="" ref="0x412c6888"/>
-        <function-ref name="clearPendingInterrupt" scoped="" ref="0x412c6968"/>
-        <function-ref name="setControl" scoped="" ref="0x412c6a48"/>
+        <function-ref name="setControlAsCapture" scoped="" ref="0x412c6508"/>
+        <function-ref name="getControl" scoped="" ref="0x412c65e8"/>
+        <function-ref name="enableEvents" scoped="" ref="0x412c66c8"/>
+        <function-ref name="areEventsEnabled" scoped="" ref="0x412c67a8"/>
+        <function-ref name="setControlAsCompare" scoped="" ref="0x412c6888"/>
+        <function-ref name="disableEvents" scoped="" ref="0x412c6968"/>
+        <function-ref name="isInterruptPending" scoped="" ref="0x412c6a48"/>
+        <function-ref name="clearPendingInterrupt" scoped="" ref="0x412c6b28"/>
+        <function-ref name="setControl" scoped="" ref="0x412c6c08"/>
       </interface-functions>
     </interface>
     <interface provided="1" name="Counter" ref="0x408af088" loc="43:../../../tos/chips/msp430/timer/Counter32khz32C.nc">
@@ -12822,9 +12822,9 @@
         <function-ref name="overflow" scoped="" ref="0x408d4288"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Alarm" ref="0x41292a38" loc="61:../../../tos/lib/timer/TransformAlarmC.nc">
+    <interface provided="1" name="Alarm" ref="0x41291e88" loc="61:../../../tos/lib/timer/TransformAlarmC.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.Transform"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Alarm" scoped="" ref="0x41292a38"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Alarm" scoped="" ref="0x41291e88"/></type-interface>
       <instance>
         <interfacedef-ref qname="Alarm"/>
         <arguments>
@@ -12837,18 +12837,18 @@
         </arguments>
       </instance>
       <interface-functions>
-        <function-ref name="getNow" scoped="" ref="0x4128f010"/>
-        <function-ref name="fired" scoped="" ref="0x41290718"/>
-        <function-ref name="startAt" scoped="" ref="0x41290c08"/>
-        <function-ref name="isRunning" scoped="" ref="0x41290990"/>
-        <function-ref name="getAlarm" scoped="" ref="0x4128f288"/>
-        <function-ref name="start" scoped="" ref="0x41290200"/>
-        <function-ref name="stop" scoped="" ref="0x412904a0"/>
+        <function-ref name="getNow" scoped="" ref="0x4128f388"/>
+        <function-ref name="fired" scoped="" ref="0x41290b18"/>
+        <function-ref name="startAt" scoped="" ref="0x4128f048"/>
+        <function-ref name="isRunning" scoped="" ref="0x41290d90"/>
+        <function-ref name="getAlarm" scoped="" ref="0x4128f600"/>
+        <function-ref name="start" scoped="" ref="0x41290600"/>
+        <function-ref name="stop" scoped="" ref="0x412908a0"/>
       </interface-functions>
     </interface>
-    <interface provided="0" name="AlarmFrom" ref="0x4128e870" loc="73:../../../tos/lib/timer/TransformAlarmC.nc">
+    <interface provided="0" name="AlarmFrom" ref="0x4128eb90" loc="73:../../../tos/lib/timer/TransformAlarmC.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.Transform"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="AlarmFrom" scoped="" ref="0x4128e870"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="AlarmFrom" scoped="" ref="0x4128eb90"/></type-interface>
       <instance>
         <interfacedef-ref qname="Alarm"/>
         <arguments>
@@ -12861,18 +12861,18 @@
         </arguments>
       </instance>
       <interface-functions>
-        <function-ref name="getNow" scoped="" ref="0x4128dd58"/>
-        <function-ref name="fired" scoped="" ref="0x4128d528"/>
-        <function-ref name="startAt" scoped="" ref="0x4128da18"/>
-        <function-ref name="isRunning" scoped="" ref="0x4128d7a0"/>
-        <function-ref name="getAlarm" scoped="" ref="0x4128c010"/>
-        <function-ref name="start" scoped="" ref="0x4128d010"/>
-        <function-ref name="stop" scoped="" ref="0x4128d2b0"/>
+        <function-ref name="getNow" scoped="" ref="0x4128c068"/>
+        <function-ref name="fired" scoped="" ref="0x4128d820"/>
+        <function-ref name="startAt" scoped="" ref="0x4128dd10"/>
+        <function-ref name="isRunning" scoped="" ref="0x4128da98"/>
+        <function-ref name="getAlarm" scoped="" ref="0x4128c2e0"/>
+        <function-ref name="start" scoped="" ref="0x4128d308"/>
+        <function-ref name="stop" scoped="" ref="0x4128d5a8"/>
       </interface-functions>
     </interface>
-    <interface provided="0" name="Counter" ref="0x4128f5d8" loc="68:../../../tos/lib/timer/TransformAlarmC.nc">
+    <interface provided="0" name="Counter" ref="0x4128f950" loc="68:../../../tos/lib/timer/TransformAlarmC.nc">
       <component-ref qname="AlarmMultiplexC.Alarm.Alarm32khz32C.Transform"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Counter" scoped="" ref="0x4128f5d8"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Counter" scoped="" ref="0x4128f950"/></type-interface>
       <instance>
         <interfacedef-ref qname="Counter"/>
         <arguments>
@@ -12885,10 +12885,10 @@
         </arguments>
       </instance>
       <interface-functions>
-        <function-ref name="get" scoped="" ref="0x4128fd28"/>
-        <function-ref name="clearOverflow" scoped="" ref="0x4128e288"/>
-        <function-ref name="isOverflowPending" scoped="" ref="0x4128e010"/>
-        <function-ref name="overflow" scoped="" ref="0x4128e500"/>
+        <function-ref name="get" scoped="" ref="0x4128e0b8"/>
+        <function-ref name="clearOverflow" scoped="" ref="0x4128e5a8"/>
+        <function-ref name="isOverflowPending" scoped="" ref="0x4128e330"/>
+        <function-ref name="overflow" scoped="" ref="0x4128e820"/>
       </interface-functions>
     </interface>
     <interface provided="1" name="FIFO" ref="0x4090fdd8" loc="44:../../../tos/platforms/telosa/chips/cc2420/HplCC2420PinsC.nc">
@@ -17933,15 +17933,15 @@
         <function-ref name="isOwner" scoped="" ref="0x40b55728"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="ResourceRequested" ref="0x414f7c48" loc="82:../../../tos/chips/msp430/usart/Msp430Spi0C.nc">
+    <interface provided="1" name="ResourceRequested" ref="0x414f6c48" loc="82:../../../tos/chips/msp430/usart/Msp430Spi0C.nc">
       <component-ref qname="CC2420SpiWireC.HplCC2420SpiC.SpiC"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="ResourceRequested" scoped="" ref="0x414f7c48"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="ResourceRequested" scoped="" ref="0x414f6c48"/></type-interface>
       <instance>
         <interfacedef-ref qname="ResourceRequested"/>
       </instance>
       <interface-functions>
-        <function-ref name="requested" scoped="" ref="0x414f7e20"/>
-        <function-ref name="immediateRequested" scoped="" ref="0x414f7f00"/>
+        <function-ref name="requested" scoped="" ref="0x414f6e20"/>
+        <function-ref name="immediateRequested" scoped="" ref="0x414f6f00"/>
       </interface-functions>
     </interface>
     <interface provided="1" name="SpiPacket" ref="0x414f59a0" loc="87:../../../tos/chips/msp430/usart/Msp430Spi0C.nc">
@@ -17975,18 +17975,18 @@
         <function-ref name="write" scoped="" ref="0x414f5268"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Resource" ref="0x414f7590" loc="81:../../../tos/chips/msp430/usart/Msp430Spi0C.nc">
+    <interface provided="1" name="Resource" ref="0x414f6590" loc="81:../../../tos/chips/msp430/usart/Msp430Spi0C.nc">
       <component-ref qname="CC2420SpiWireC.HplCC2420SpiC.SpiC"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Resource" scoped="" ref="0x414f7590"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Resource" scoped="" ref="0x414f6590"/></type-interface>
       <instance>
         <interfacedef-ref qname="Resource"/>
       </instance>
       <interface-functions>
-        <function-ref name="release" scoped="" ref="0x414f7768"/>
-        <function-ref name="immediateRequest" scoped="" ref="0x414f7848"/>
-        <function-ref name="request" scoped="" ref="0x414f7928"/>
-        <function-ref name="granted" scoped="" ref="0x414f7a08"/>
-        <function-ref name="isOwner" scoped="" ref="0x414f7ae8"/>
+        <function-ref name="release" scoped="" ref="0x414f6768"/>
+        <function-ref name="immediateRequest" scoped="" ref="0x414f6848"/>
+        <function-ref name="request" scoped="" ref="0x414f6928"/>
+        <function-ref name="granted" scoped="" ref="0x414f6a08"/>
+        <function-ref name="isOwner" scoped="" ref="0x414f6ae8"/>
       </interface-functions>
     </interface>
     <interface provided="1" name="FastSpiByte" ref="0x414f53c8" loc="85:../../../tos/chips/msp430/usart/Msp430Spi0C.nc">
@@ -23400,9 +23400,9 @@
         <function-ref name="init" scoped="" ref="0x40f45598"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Alarm" ref="0x415a3c30" loc="44:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
+    <interface provided="1" name="Alarm" ref="0x415a2c30" loc="44:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
       <component-ref qname="HilTimerMilliC.AlarmMilli32C.AlarmFrom"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Alarm" scoped="" ref="0x415a3c30"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Alarm" scoped="" ref="0x415a2c30"/></type-interface>
       <instance>
         <interfacedef-ref qname="Alarm"/>
         <arguments>
@@ -23424,14 +23424,14 @@
         <function-ref name="stop" scoped="" ref="0x415a1640"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Init" ref="0x415a37d8" loc="43:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
+    <interface provided="1" name="Init" ref="0x415a27d8" loc="43:../../../tos/chips/msp430/timer/Alarm32khz16C.nc">
       <component-ref qname="HilTimerMilliC.AlarmMilli32C.AlarmFrom"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Init" scoped="" ref="0x415a37d8"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Init" scoped="" ref="0x415a27d8"/></type-interface>
       <instance>
         <interfacedef-ref qname="Init"/>
       </instance>
       <interface-functions>
-        <function-ref name="init" scoped="" ref="0x415a39b0"/>
+        <function-ref name="init" scoped="" ref="0x415a29b0"/>
       </interface-functions>
     </interface>
     <interface provided="1" name="Msp430Compare" ref="0x415f6ac8" loc="41:../../../tos/chips/msp430/timer/Msp430Timer32khzC.nc">
@@ -23507,17 +23507,17 @@
         <interfacedef-ref qname="Msp430Timer"/>
       </instance>
       <interface-functions>
-        <function-ref name="clear" scoped="" ref="0x415f2050"/>
-        <function-ref name="setClockSource" scoped="" ref="0x415f2130"/>
-        <function-ref name="enableEvents" scoped="" ref="0x415f2210"/>
-        <function-ref name="get" scoped="" ref="0x415f22f0"/>
-        <function-ref name="disableEvents" scoped="" ref="0x415f23d0"/>
-        <function-ref name="clearOverflow" scoped="" ref="0x415f24b0"/>
-        <function-ref name="getMode" scoped="" ref="0x415f2590"/>
-        <function-ref name="isOverflowPending" scoped="" ref="0x415f2670"/>
-        <function-ref name="overflow" scoped="" ref="0x415f2750"/>
-        <function-ref name="setMode" scoped="" ref="0x415f2830"/>
-        <function-ref name="setInputDivider" scoped="" ref="0x415f2910"/>
+        <function-ref name="clear" scoped="" ref="0x415f1050"/>
+        <function-ref name="setClockSource" scoped="" ref="0x415f1130"/>
+        <function-ref name="enableEvents" scoped="" ref="0x415f1210"/>
+        <function-ref name="get" scoped="" ref="0x415f12f0"/>
+        <function-ref name="disableEvents" scoped="" ref="0x415f13d0"/>
+        <function-ref name="clearOverflow" scoped="" ref="0x415f14b0"/>
+        <function-ref name="getMode" scoped="" ref="0x415f1590"/>
+        <function-ref name="isOverflowPending" scoped="" ref="0x415f1670"/>
+        <function-ref name="overflow" scoped="" ref="0x415f1750"/>
+        <function-ref name="setMode" scoped="" ref="0x415f1830"/>
+        <function-ref name="setInputDivider" scoped="" ref="0x415f1910"/>
       </interface-functions>
     </interface>
     <interface provided="1" name="Alarm" ref="0x415f44d8" loc="46:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
@@ -23554,17 +23554,17 @@
         <function-ref name="init" scoped="" ref="0x415f4238"/>
       </interface-functions>
     </interface>
-    <interface provided="0" name="Msp430TimerControl" ref="0x415f2a70" loc="48:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
+    <interface provided="0" name="Msp430TimerControl" ref="0x415f1a70" loc="48:../../../tos/chips/msp430/timer/Msp430AlarmC.nc">
       <component-ref qname="HilTimerMilliC.AlarmMilli32C.AlarmFrom.Msp430Alarm"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430TimerControl" scoped="" ref="0x415f2a70"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Msp430TimerControl" scoped="" ref="0x415f1a70"/></type-interface>
       <instance>
         <interfacedef-ref qname="Msp430TimerControl"/>
       </instance>
       <interface-functions>
-        <function-ref name="setControlAsCapture" scoped="" ref="0x415f2c48"/>
-        <function-ref name="getControl" scoped="" ref="0x415f2d28"/>
-        <function-ref name="enableEvents" scoped="" ref="0x415f2e08"/>
-        <function-ref name="areEventsEnabled" scoped="" ref="0x415f2ee8"/>
+        <function-ref name="setControlAsCapture" scoped="" ref="0x415f1c48"/>
+        <function-ref name="getControl" scoped="" ref="0x415f1d28"/>
+        <function-ref name="enableEvents" scoped="" ref="0x415f1e08"/>
+        <function-ref name="areEventsEnabled" scoped="" ref="0x415f1ee8"/>
         <function-ref name="setControlAsCompare" scoped="" ref="0x415f0010"/>
         <function-ref name="disableEvents" scoped="" ref="0x415f00f0"/>
         <function-ref name="isInterruptPending" scoped="" ref="0x415f01d0"/>
@@ -26019,16 +26019,16 @@
         <function-ref name="wasAcked" scoped="" ref="0x41141c08"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="AMSend" ref="0x416a1b70" loc="49:../../../tos/system/DirectAMSenderC.nc">
+    <interface provided="1" name="AMSend" ref="0x416a0b70" loc="49:../../../tos/system/DirectAMSenderC.nc">
       <component-ref qname="SenderAppC.AMSendSensor.SenderC"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="AMSend" scoped="" ref="0x416a1b70"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="AMSend" scoped="" ref="0x416a0b70"/></type-interface>
       <instance>
         <interfacedef-ref qname="AMSend"/>
       </instance>
       <interface-functions>
-        <function-ref name="send" scoped="" ref="0x416a1d48"/>
-        <function-ref name="getPayload" scoped="" ref="0x416a1e28"/>
-        <function-ref name="maxPayloadLength" scoped="" ref="0x416a1f08"/>
+        <function-ref name="send" scoped="" ref="0x416a0d48"/>
+        <function-ref name="getPayload" scoped="" ref="0x416a0e28"/>
+        <function-ref name="maxPayloadLength" scoped="" ref="0x416a0f08"/>
         <function-ref name="cancel" scoped="" ref="0x4169d010"/>
         <function-ref name="sendDone" scoped="" ref="0x4169d0f0"/>
       </interface-functions>
@@ -26103,28 +26103,28 @@
         <function-ref name="send" scoped="" ref="0x41697d48"/>
         <function-ref name="getPayload" scoped="" ref="0x41697e28"/>
         <function-ref name="maxPayloadLength" scoped="" ref="0x41697f08"/>
-        <function-ref name="cancel" scoped="" ref="0x41696010"/>
-        <function-ref name="sendDone" scoped="" ref="0x416960f0"/>
+        <function-ref name="cancel" scoped="" ref="0x41695010"/>
+        <function-ref name="sendDone" scoped="" ref="0x416950f0"/>
       </interface-functions>
     </interface>
-    <interface provided="0" name="AMPacket" ref="0x41696230" loc="47:../../../tos/system/AMQueueEntryP.nc">
+    <interface provided="0" name="AMPacket" ref="0x41695230" loc="47:../../../tos/system/AMQueueEntryP.nc">
       <component-ref qname="SenderAppC.AMSendSensor.SenderC.AMQueueEntryP"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="AMPacket" scoped="" ref="0x41696230"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="AMPacket" scoped="" ref="0x41695230"/></type-interface>
       <instance>
         <interfacedef-ref qname="AMPacket"/>
       </instance>
       <interface-functions>
-        <function-ref name="group" scoped="" ref="0x41696408"/>
-        <function-ref name="source" scoped="" ref="0x416964e8"/>
-        <function-ref name="address" scoped="" ref="0x416965c8"/>
-        <function-ref name="destination" scoped="" ref="0x416966a8"/>
-        <function-ref name="setSource" scoped="" ref="0x41696788"/>
-        <function-ref name="setDestination" scoped="" ref="0x41696868"/>
-        <function-ref name="type" scoped="" ref="0x41696948"/>
-        <function-ref name="setType" scoped="" ref="0x41696a28"/>
-        <function-ref name="isForMe" scoped="" ref="0x41696b08"/>
-        <function-ref name="setGroup" scoped="" ref="0x41696be8"/>
-        <function-ref name="localGroup" scoped="" ref="0x41696cc8"/>
+        <function-ref name="group" scoped="" ref="0x41695408"/>
+        <function-ref name="source" scoped="" ref="0x416954e8"/>
+        <function-ref name="address" scoped="" ref="0x416955c8"/>
+        <function-ref name="destination" scoped="" ref="0x416956a8"/>
+        <function-ref name="setSource" scoped="" ref="0x41695788"/>
+        <function-ref name="setDestination" scoped="" ref="0x41695868"/>
+        <function-ref name="type" scoped="" ref="0x41695948"/>
+        <function-ref name="setType" scoped="" ref="0x41695a28"/>
+        <function-ref name="isForMe" scoped="" ref="0x41695b08"/>
+        <function-ref name="setGroup" scoped="" ref="0x41695be8"/>
+        <function-ref name="localGroup" scoped="" ref="0x41695cc8"/>
       </interface-functions>
     </interface>
     <interface provided="0" name="AMSendDQI" ref="0x41175bc8" loc="9:SenderC.nc">
@@ -26261,9 +26261,9 @@
         <function-ref name="stop" scoped="" ref="0x4116f170"/>
       </interface-functions>
     </interface>
-    <interface provided="1" name="Timer" ref="0x4113fa60" loc="45:../../../tos/system/TimerMilliC.nc">
+    <interface provided="1" name="Timer" ref="0x4113fef8" loc="45:../../../tos/system/TimerMilliC.nc">
       <component-ref qname="SenderAppC.Timer"/>
-      <type-interface size="I:2" alignment="I:2"><interface-ref name="Timer" scoped="" ref="0x4113fa60"/></type-interface>
+      <type-interface size="I:2" alignment="I:2"><interface-ref name="Timer" scoped="" ref="0x4113fef8"/></type-interface>
       <instance>
         <interfacedef-ref qname="Timer"/>
         <arguments>
@@ -26273,17 +26273,17 @@
         </arguments>
       </instance>
       <interface-functions>
-        <function-ref name="getNow" scoped="" ref="0x411a5570"/>
-        <function-ref name="fired" scoped="" ref="0x4113e810"/>
-        <function-ref name="startPeriodicAt" scoped="" ref="0x4113ef18"/>
-        <function-ref name="isOneShot" scoped="" ref="0x4113ecc0"/>
-        <function-ref name="getdt" scoped="" ref="0x411a5a20"/>
-        <function-ref name="gett0" scoped="" ref="0x411a57c8"/>
-        <function-ref name="isRunning" scoped="" ref="0x4113ea68"/>
-        <function-ref name="startPeriodic" scoped="" ref="0x4113e0b8"/>
-        <function-ref name="startOneShotAt" scoped="" ref="0x411a5250"/>
-        <function-ref name="startOneShot" scoped="" ref="0x4113e338"/>
-        <function-ref name="stop" scoped="" ref="0x4113e5b8"/>
+        <function-ref name="getNow" scoped="" ref="0x411a5a18"/>
+        <function-ref name="fired" scoped="" ref="0x4113ecb0"/>
+        <function-ref name="startPeriodicAt" scoped="" ref="0x411a53d8"/>
+        <function-ref name="isOneShot" scoped="" ref="0x411a5180"/>
+        <function-ref name="getdt" scoped="" ref="0x411a5ec8"/>
+        <function-ref name="gett0" scoped="" ref="0x411a5c70"/>
+        <function-ref name="isRunning" scoped="" ref="0x4113ef08"/>
+        <function-ref name="startPeriodic" scoped="" ref="0x4113e558"/>
+        <function-ref name="startOneShotAt" scoped="" ref="0x411a56f8"/>
+        <function-ref name="startOneShot" scoped="" ref="0x4113e7d8"/>
+        <function-ref name="stop" scoped="" ref="0x4113ea58"/>
       </interface-functions>
     </interface>
   </interfaces>

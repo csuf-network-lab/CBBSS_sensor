@@ -9,21 +9,21 @@ import org.apache.commons.cli.*;
 import org.knowm.xchart.*;
 
 public class Aggregator {
-  private boolean               visFlag;
-  private ArrayList<Double>     x, y;
-  private MoteIF                mote;
-  private SensorProfile         profile;
-  private SwingWrapper<XYChart> chartWrapper;
-  private XYChart               chart;
+  private boolean                  visFlag;
+  private ArrayList<Double>        x, y;
+  private ArrayList<SensorProfile> profiles;
+  private MoteIF                   mote;
+  private SwingWrapper<XYChart>    chartWrapper;
+  private XYChart                  chart;
 
   /*****************************************************************************
   * The constructor for the Data Aggregator. Initializes class variables.
   *****************************************************************************/
   public Aggregator(MoteIF m, boolean v) {
     // Initialize variables
-    mote    = m;
-    profile = new SensorProfile(-1);
-    visFlag = v;
+    mote     = m;
+    profiles = new ArrayList<SensorProfile>(10);
+    visFlag  = v;
 
     // Initialize the XChart variables and display the chart
     if (visFlag) {
@@ -42,6 +42,7 @@ public class Aggregator {
     // Register an anonymous listener for DQI messages
     mote.registerListener(new DQIMsg(), new MessageListener() {
       public void messageReceived(int toAddress, Message message) {
+        boolean     spFlag;
         DQIMsg      msg;
         FeedbackMsg feedback;
         int         endId, i, msgId, priorityCount, sensorId, startId;
@@ -71,11 +72,22 @@ public class Aggregator {
         }
         System.out.println("]\n");
 
-        // Add to the sensor profile
-        if (profile.getSensorId() == -1) {
-          profile.setSensorId(sensorId);
+        // Find the correct sensor profile
+        spFlag = false;
+        i      = 0;
+        for (SensorProfile sp : profiles) {
+          if (sp.getSensorId() == sensorId) {
+            spFlag = true;
+            break;
+          }
+          i++;
         }
-        feedback = profile.receiveDQIMsg(msg);
+        if (!spFlag) {
+          profiles.add(new SensorProfile(sensorId));
+        }
+
+        // Add to the sensor profile
+        feedback = profiles.get(i).receiveDQIMsg(msg);
         if (feedback != null) {
           sendFeedbackMsg(feedback);
         }
@@ -85,6 +97,7 @@ public class Aggregator {
     // Register an anonymous listener for sensor messages
     mote.registerListener(new SensorMsg(), new MessageListener() {
       public void messageReceived(int toAddress, Message message) {
+        boolean   spFlag;
         int       i, j, msgId, readings[], sensorId, tag, times[];
         SensorMsg msg;
 
@@ -114,12 +127,23 @@ public class Aggregator {
         }
         System.out.println("]\n");
 
-        // Add to the sensor profile
-        if (profile.getSensorId() == -1) {
-          profile.setSensorId(sensorId);
+        // Find the correct sensor profile
+        spFlag = false;
+        i      = 0;
+        for (SensorProfile sp : profiles) {
+          if (sp.getSensorId() == sensorId) {
+            spFlag = true;
+            break;
+          }
+          i++;
         }
-        for (i = 0; i < readings.length; i++) {
-          profile.addData(readings[i], times[i], tag == 1);
+        if (!spFlag) {
+          profiles.add(new SensorProfile(sensorId));
+        }
+
+        // Add the readings to the sensor profile
+        for (j = 0; j < readings.length; j++) {
+          profiles.get(i).addData(readings[j], times[j], tag == 1);
         }
 
         // Update the chart

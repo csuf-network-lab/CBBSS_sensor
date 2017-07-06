@@ -103,13 +103,16 @@ implementation {
       // Cast the payload to the correct data type
       msg = (FeedbackMsg*) payload;
 
-      // Perform feedback
-      if (msg->feedback == 1) {
-        priorityCutoff++;
-      }
+      // Ensure the feedback is for this sensor
+      if (msg->sensorId == TOS_NODE_ID) {
+        // Perform feedback
+        if (msg->feedback == 1) {
+          priorityCutoff++;
+        }
 
-      // Toggle the red LED
-      call Leds.led0Toggle();
+        // Toggle the red LED
+        call Leds.led0Toggle();
+      }
     }
 
     return message;

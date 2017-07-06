@@ -1,8 +1,8 @@
 <metrics>
   <ram>2024</ram>
   <telosb-ram>2024</telosb-ram>
-  <flash>13862</flash>
-  <telosb-flash>13862</telosb-flash>
+  <flash>13884</flash>
+  <telosb-flash>13884</telosb-flash>
   <stack>1656</stack>
   <telosb-stack>1656</telosb-stack>
 </metrics>
