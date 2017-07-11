@@ -2,28 +2,38 @@
 #include "PriorityQueue.h"
 #include "SenderData.h"
 #include <Timer.h>
+#include "AckQueue.h"
 
 #define TIMER_PERIOD_MILLI 50
+#define ACKTIMER_PERIOD_MILLI 10
 
 module SenderC {
+  uses interface AMSend        as AMSendACK;
   uses interface AMSend        as AMSendDQI;
   uses interface AMSend        as AMSendSensor;
   uses interface Boot;
   uses interface Leds;
+  uses interface Packet        as PacketACK;
   uses interface Packet        as PacketDQI;
   uses interface Packet        as PacketSensor;
+  uses interface Receive       as ReceiveACK;
   uses interface Receive       as ReceiveFeedback;
   uses interface SplitControl;
   uses interface Timer<TMilli> as Timer;
+  uses interface ACKTimer<TMilli> as ACKTimer;
 }
 
 implementation {
   bool      radioBusy;
-  message_t sensorPacket, dqiPacket;
+  message_t sensorPacket, dqiPacket, ackPacket;
   pqueue    nonPriorityBuffer, priorityBuffer;
   uint8_t   priorityCutoff;
   uint16_t  currentReading, msgId, nextNextReading, nextReading,
-            prevPrevReading, prevReading, readingsIndex;
+            prevPrevReading, prevReading, readingsIndex, ACKCounter;
+
+  //ACK queues
+  QueueACK* ACKQueue_DQI, ACKQueue_Sensor;
+
 
   uint8_t calculatePriority();
   void    getReading();
@@ -48,16 +58,115 @@ implementation {
     priorityCutoff  = 1;
     radioBusy       = FALSE;
     readingsIndex   = 2;
+    ACKCounter      = 0;
 
     // Initialize the buffers
     pq_init(&nonPriorityBuffer);
     pq_init(&priorityBuffer);
+
+    //initialize ACK queues
+    ACKQueue_DQI    = (AckQueue*)malloc(sizeof(AckQueue));
+    ACKQueue_Sensor = (AckQueue*)malloc(sizeof(AckQueue));
+    qACK_init(ACKQueue_DQI);
+    qACK_init(ACKQueue_Sensor);
 
     // Initialize the DQI variables
     DQIInit();
 
     // Start the controller
     call SplitControl.start();
+  }
+
+  /*****************************************************************************
+  * This event is triggered every time the allotted, specified time interval has
+  * elapsed.
+  *****************************************************************************/
+  event void ACKTimer.fired() {
+    uint16_t   attemptNum;
+    SensorMsg* senMsg, tempS;
+    DQIMsq*    dqiMsg, tempD;
+
+    if (ACKCounter % 2 == 0) {
+      //check Sensor ACK queue
+      if (ACKQueue_Sensor->count != 0) {
+        attemptNum = qACK_frontAttempts(ACKQueue_Sensor);
+        tempS      = (SensorMsg*)qACK_front(ACKQueue_Sensor);
+        if (attemptNum < SEN_ATTEMPTS) {
+          qACK_enqueue(ACKQueue_Sensor, (void*)tempS, temps->msgId, attemptNum + 1);
+        }
+
+        senMsg = (SensorMsg*)
+              call PacketSensor.getPayload(&sensorPacket, sizeof(SensorMsg));
+
+        // Ensure the reference is valid
+        if (senMsg == NULL) {
+          return;
+        }
+        
+        for (i = 0; i < 5; i++) {
+          senMsg->readings[i] = tempS->readings[i];
+          senMsg->times[i]    = tempS->times[i];
+        }
+
+        // Set the remaining fields of the message
+        senMsg->sensorId = tempS->sensorId;
+        senMsg->msgId    = tempS->msgId;
+        senMsg->tag      = tempS->tag;
+
+        // Transmit the message
+        error = call AMSendSensor.send
+                (AM_BROADCAST_ADDR, &sensorPacket, sizeof(SensorMsg));
+        if (error == SUCCESS) {
+          radioBusy = TRUE;
+          call Leds.led1Toggle();
+        }
+
+        if (attemptNum >= SEN_ATTEMPTS) {
+          free(tempS);
+        }
+      }
+    }
+    else if (ACKCounter % 5 == 0) {
+      //check DQI ACK queue
+      if (ACKQueue_DQI->count != 0) {
+        attemptNum = qACK_frontAttempts(ACKQueue_DQI);
+        tempD      = (DQIMsg*)qACK_front(ACKQueue_DQI);
+        if (attemptNum < DQI_ATTEMPTS) {
+          qACK_enqueue(ACKQueue_DQI, (void*)tempD, tempD->msgId, attemptNum + 1);
+        }
+
+        dqiMsg = (DQIMsg*) call PacketDQI.getPayload(&dqiPacket, sizeof(DQIMsg));
+
+        // Ensure the reference is valid
+        if (dqiMsg == NULL) {
+          return;
+        }
+
+        // Set the fields of the message
+        for (i = 0; i < 5; i++) {
+          dqiMsg->values[i] = tempD->values[i];
+        }
+        dqiMsg->sensorId      = tempD->sensorId;
+        dqiMsg->msgId         = tempD->msgId;
+        dqiMsg->priorityCount = tempD->priorityCount;
+        dqiMsg->startId       = tempD->startId ;
+        dqiMsg->endId         = tempD->endId;
+
+        // Transmit the message
+        error = call AMSendDQI.send(AM_BROADCAST_ADDR, &dqiPacket, sizeof(DQIMsg));
+        if (error == SUCCESS) {
+          radioBusy = TRUE;
+          //call Leds.led2Toggle();
+        }
+
+        if (attemptNum >= DQI_ATTEMPTS) {
+          free(tempD);
+        }
+      }
+    }
+
+    ACKCounter++
+
   }
 
   /*****************************************************************************
@@ -82,6 +191,43 @@ implementation {
     else {                  // 30%
       sendSensorMsg();
     }
+  }
+
+  /*****************************************************************************
+  * This event is triggered every time the receiver receives an ACK message.
+  *
+  * @params
+  *   message - ?
+  *   payload - ?
+  *   length  - ?
+  *
+  * @out
+  *****************************************************************************/
+  event message_t*
+  ReceiveACK.receive(message_t* message, void* payload, uint8_t length) {
+    ACKMsg* msg;
+
+    // Ensure we received a feedback message
+    if (length == sizeof(ACKMsg)) {
+      // Cast the payload to the correct data type
+      msg = (ACKMsg*) payload;
+
+      // Ensure the feedback is for this sensor
+      if (msg->sensorId == TOS_NODE_ID) {
+        // Perform feedback
+        if (msg->msgType == 0) {
+          qACK_dequeue(ACKQueue_DQI, msg_msgID);
+        }
+        else if (msg->msgType == 1) {
+          qACK_dequeue(ACKQueue_Sensor, msg_msgID);
+        }
+
+        // Toggle the red LED
+        //call Leds.led0Toggle();
+      }
+    }
+
+    return message;
   }
 
   /*****************************************************************************
@@ -110,12 +256,43 @@ implementation {
           priorityCutoff++;
         }
 
+        //send ACK
+        ACKMsg* ack;
+
+        (ACKMsg*) call PacketACK.getPayload(&ackPacket, sizeof(ACKMsg));
+
+        ack->sensorId = TOS_NODE_ID;
+        ack->msgId    = msg->msgId;
+        ack->msgType  = 2;
+
+        error = call AMSendACK.send(AM_BROADCAST_ADDR, &ackPacket, sizeof(ACKMsg));
+        if (error == SUCCESS) {
+          radioBusy = TRUE;
+        //call Leds.led2Toggle();
+        }
         // Toggle the red LED
-        call Leds.led0Toggle();
+        //call Leds.led0Toggle();
       }
     }
 
     return message;
+  }
+
+  /*****************************************************************************
+  * This event is triggered every time the active message sender for ACK
+  * messages has finished sending a packet. Updates the busy flag to false so
+  * other components can use the radio. It also toggles the blue LED for visual
+  * confirmation.
+  *
+  * @params
+  *   message - ?
+  *   error   - ?
+  *****************************************************************************/
+  event void AMSendDQI.sendDone(message_t* message, error_t error) {
+    if (&ackPacket == message) {
+      radioBusy = FALSE;
+      //call Leds.led2Toggle();
+    }
   }
 
   /*****************************************************************************
@@ -164,6 +341,7 @@ implementation {
   event void SplitControl.startDone(error_t error) {
     if (error == SUCCESS) {
       call Timer.startPeriodic(TIMER_PERIOD_MILLI);
+      call ACKTimer.startPeriodic(ACKTIMER_PERIOD_MILLI);
     }
     else {
       call SplitControl.start();
@@ -316,6 +494,7 @@ implementation {
   *****************************************************************************/
   void sendDQIMsg() {
     DQIMsg*  msg;
+    DQIMsg*  msgACK;
     error_t  error;
     uint8_t  i;
     uint16_t priorityCount;
@@ -357,6 +536,20 @@ implementation {
       call Leds.led2Toggle();
     }
 
+    //add the mesage to the ack queue
+    msgACK = (DQIMsg*)malloc(sizeof(DQIMsg));
+    msgACK->sensorId      = msg->sensorId; 
+    msgACK->msgId         = msg->msgId; 
+    msgACK->priorityCount = msg->priorityCount; 
+    msgACK->startId       = msg->startId; 
+    msgACK->endId         = msg->endId; 
+
+    //remove front if full
+    if (ACKQueue_DQI->count == DQI_ACKQUEUE_SIZE) qDQI_front(ACKQueue_DQI);
+
+    qACK_enqueue(ACKQueue_DQI, (void*)msgACK, msg->msgId, 0);
+
+
     // Reset the DQI variables
     DQIInit();
   }
@@ -370,7 +563,7 @@ implementation {
     bool       priority;
     error_t    error;
     sample     s;
-    SensorMsg* msg;
+    SensorMsg* msg, msgACK;
     uint8_t    i;
 
     // Do not transmit if the radio is already busy or if both buffers have less
@@ -417,5 +610,20 @@ implementation {
       radioBusy = TRUE;
       call Leds.led1Toggle();
     }
+
+    //add the mesage to the ack queue
+    msgACK = (SensorMsg*)malloc(sizeof(SensorMsg));
+    msgACK->sensorId      = msg->sensorId; 
+    msgACK->msgId         = msg->msgId;
+    msgACK->tag           = msg->msg->tag; 
+    for (i = 0; i < 5; i++) {
+      msgACK->readings[i] = msg->readings[i];
+      msgACK->times[i]    = msg->times[i];
+    }
+
+    //remove front if full
+    if (ACKQueue_Sensor->count == SEN_ACKQUEUE_SIZE) qDQI_front(ACKQueue_Sensor);
+
+    qACK_enqueue(ACKQueue_Sensor, (void*)msgACK, msg->msgId, 0);
   }
 }
