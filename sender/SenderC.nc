@@ -20,7 +20,7 @@ module SenderC {
   uses interface Receive       as ReceiveFeedback;
   uses interface SplitControl;
   uses interface Timer<TMilli> as Timer;
-  uses interface ACKTimer<TMilli> as ACKTimer;
+  uses interface Timer<TMilli> as ACKTimer;
 }
 
 implementation {
@@ -32,7 +32,7 @@ implementation {
             prevPrevReading, prevReading, readingsIndex, ACKCounter;
 
   //ACK queues
-  QueueACK* ACKQueue_DQI, ACKQueue_Sensor;
+  queueACK* ACKQueue_DQI, *ACKQueue_Sensor;
 
 
   uint8_t calculatePriority();
@@ -65,8 +65,8 @@ implementation {
     pq_init(&priorityBuffer);
 
     //initialize ACK queues
-    ACKQueue_DQI    = (AckQueue*)malloc(sizeof(AckQueue));
-    ACKQueue_Sensor = (AckQueue*)malloc(sizeof(AckQueue));
+    ACKQueue_DQI    = (queueACK*)malloc(sizeof(queueACK));
+    ACKQueue_Sensor = (queueACK*)malloc(sizeof(queueACK));
     qACK_init(ACKQueue_DQI);
     qACK_init(ACKQueue_Sensor);
 
@@ -82,9 +82,10 @@ implementation {
   * elapsed.
   *****************************************************************************/
   event void ACKTimer.fired() {
-    uint16_t   attemptNum;
-    SensorMsg* senMsg, tempS;
-    DQIMsq*    dqiMsg, tempD;
+    error_t error;
+    uint16_t   attemptNum, i;
+    SensorMsg* senMsg, *tempS;
+    DQIMsg*    dqiMsg, *tempD;
 
     if (ACKCounter % 2 == 0) {
       //check Sensor ACK queue
@@ -92,7 +93,7 @@ implementation {
         attemptNum = qACK_frontAttempts(ACKQueue_Sensor);
         tempS      = (SensorMsg*)qACK_front(ACKQueue_Sensor);
         if (attemptNum < SEN_ATTEMPTS) {
-          qACK_enqueue(ACKQueue_Sensor, (void*)tempS, temps->msgId, attemptNum + 1);
+          qACK_enqueue(ACKQueue_Sensor, (void*)tempS, tempS->msgId, attemptNum + 1);
         }
 
         senMsg = (SensorMsg*)
@@ -165,7 +166,7 @@ implementation {
       }
     }
 
-    ACKCounter++
+    ACKCounter++;
 
   }
 
@@ -216,10 +217,10 @@ implementation {
       if (msg->sensorId == TOS_NODE_ID) {
         // Perform feedback
         if (msg->msgType == 0) {
-          qACK_dequeue(ACKQueue_DQI, msg_msgID);
+          qACK_dequeue(ACKQueue_DQI, msg->msgId);
         }
         else if (msg->msgType == 1) {
-          qACK_dequeue(ACKQueue_Sensor, msg_msgID);
+          qACK_dequeue(ACKQueue_Sensor, msg->msgId);
         }
 
         // Toggle the red LED
@@ -243,6 +244,8 @@ implementation {
   event message_t*
   ReceiveFeedback.receive(message_t* message, void* payload, uint8_t length) {
     FeedbackMsg* msg;
+    ACKMsg* ack;
+    error_t error;
 
     // Ensure we received a feedback message
     if (length == sizeof(FeedbackMsg)) {
@@ -257,12 +260,10 @@ implementation {
         }
 
         //send ACK
-        ACKMsg* ack;
-
-        (ACKMsg*) call PacketACK.getPayload(&ackPacket, sizeof(ACKMsg));
+        ack =
+          (ACKMsg*) call PacketACK.getPayload(&ackPacket, sizeof(ACKMsg));
 
         ack->sensorId = TOS_NODE_ID;
-        ack->msgId    = msg->msgId;
         ack->msgType  = 2;
 
         error = call AMSendACK.send(AM_BROADCAST_ADDR, &ackPacket, sizeof(ACKMsg));
@@ -288,7 +289,7 @@ implementation {
   *   message - ?
   *   error   - ?
   *****************************************************************************/
-  event void AMSendDQI.sendDone(message_t* message, error_t error) {
+  event void AMSendACK.sendDone(message_t* message, error_t error) {
     if (&ackPacket == message) {
       radioBusy = FALSE;
       //call Leds.led2Toggle();
@@ -545,7 +546,9 @@ implementation {
     msgACK->endId         = msg->endId; 
 
     //remove front if full
-    if (ACKQueue_DQI->count == DQI_ACKQUEUE_SIZE) qDQI_front(ACKQueue_DQI);
+    //TODO
+    //********NEED TO FREE THE MEMORY WHEN CALLING FRONT*****
+    if (ACKQueue_DQI->count == DQI_ACKQUEUE_SIZE) qACK_front(ACKQueue_DQI);
 
     qACK_enqueue(ACKQueue_DQI, (void*)msgACK, msg->msgId, 0);
 
@@ -563,7 +566,7 @@ implementation {
     bool       priority;
     error_t    error;
     sample     s;
-    SensorMsg* msg, msgACK;
+    SensorMsg* msg, *msgACK;
     uint8_t    i;
 
     // Do not transmit if the radio is already busy or if both buffers have less
@@ -615,14 +618,16 @@ implementation {
     msgACK = (SensorMsg*)malloc(sizeof(SensorMsg));
     msgACK->sensorId      = msg->sensorId; 
     msgACK->msgId         = msg->msgId;
-    msgACK->tag           = msg->msg->tag; 
+    msgACK->tag           = msg->tag; 
     for (i = 0; i < 5; i++) {
       msgACK->readings[i] = msg->readings[i];
       msgACK->times[i]    = msg->times[i];
     }
 
     //remove front if full
-    if (ACKQueue_Sensor->count == SEN_ACKQUEUE_SIZE) qDQI_front(ACKQueue_Sensor);
+    //TODO
+    //********NEED TO FREE THE MEMORY WHEN CALLING FRONT*****
+    if (ACKQueue_Sensor->count == SEN_ACKQUEUE_SIZE) qACK_front(ACKQueue_Sensor);
 
     qACK_enqueue(ACKQueue_Sensor, (void*)msgACK, msg->msgId, 0);
   }

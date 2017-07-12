@@ -7,7 +7,7 @@ configuration SenderAppC {
 
 implementation {
   components     ActiveMessageC;
-  components new AMReceiverC(AM_FEEDBACKMSG) as AMReciveFeed;
+  components new AMReceiverC(AM_FEEDBACKMSG) as AMReceiveFeed;
   components new AMReceiverC(AM_ACKMSG)      as AMReceiveACK;
   components new AMSenderC(AM_ACKMSG)    as AMSendACK;
   components new AMSenderC(AM_DQIMSG)    as AMSendDQI;

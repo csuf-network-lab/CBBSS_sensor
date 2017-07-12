@@ -18,11 +18,11 @@ typedef struct Node {
   void*    data;
   uint16_t msgID;
   uint16_t attempt;
-  Node*    next;
+  struct Node*    next;
 } Node;
 
 typedef struct queueACK {
-  Node*    front, rear;
+  Node*    front, *rear;
   uint16_t count;
 } queueACK;
 
@@ -32,7 +32,7 @@ typedef struct queueACK {
 * Queue function declarations for ACK messages.
 *******************************************************************************/
 uint16_t qACK_frontAttempts(queueACK*);
-void*    qACk_front(queueACK*);
+void*    qACK_front(queueACK*);
 void     qACK_enqueue(queueACK*, void*, uint16_t, uint16_t);
 void     qACK_init(queueACK*);
 bool     qACK_dequeue(queueACK*, uint16_t);
@@ -60,7 +60,7 @@ uint16_t qACK_frontAttempts(queueACK* q) {
 * @out
 *   the ACK message at the front of the queue
 *******************************************************************************/
-void* qDQI_front(queueACK* q) {
+void* qACK_front(queueACK* q) {
 
   void* d;
   Node* tempFront;
@@ -73,7 +73,7 @@ void* qDQI_front(queueACK* q) {
   // Save the message at the front
   d = q->front->data;
 
-  tempFront = q->Front;
+  tempFront = q->front;
 
   // Update
   q->front = q->front->next;
@@ -94,21 +94,21 @@ void* qDQI_front(queueACK* q) {
 *   d  - the message to be added
 *   ID - msgID
 *******************************************************************************/
-void qDQI_enqueue(queueACK* q, void* d, uint16_t ID, uint16_t attemptNum) {
+void qACK_enqueue(queueACK* q, void* d, uint16_t ID, uint16_t attemptNum) {
 
   Node* temp    = (Node*)malloc(sizeof(Node));
   temp->data    = d;
-  temp->msgId   = ID;
+  temp->msgID   = ID;
   temp->attempt = attemptNum;
   temp->next    = NULL;
 
-  if (q->front == NULL && q->rear == NULL) {
+  if (q->front == NULL) {
     q->front = q->rear = temp;
     q->count++;
     return;
   }
   
-  q->rear->next = temp;
+  (q->rear)->next = temp;
   q->rear = temp;
   q->count++;
 
@@ -121,7 +121,7 @@ void qDQI_enqueue(queueACK* q, void* d, uint16_t ID, uint16_t attemptNum) {
 * @params
 *   q - the queue
 *******************************************************************************/
-void qDQI_init(queueACK* q) {
+void qACK_init(queueACK* q) {
   q->front = NULL;
   q->rear  = NULL;
   q->count = 0;
@@ -137,22 +137,22 @@ void qDQI_init(queueACK* q) {
 * @out
 *   true if the queue is empty, false otherwise
 *******************************************************************************/
-bool qACK_dequeue(queueACK*, uint16_t targetID) {
+bool qACK_dequeue(queueACK* q, uint16_t targetID) {
   Node* temp = q->front;
   Node* curr = temp;
 
-  if (temp == NULL) return false;
+  if (temp == NULL) return FALSE;
 
   temp = temp->next;
 
   while (temp != NULL) {
-    if (temp->msgId == targetID) {
+    if (temp->msgID == targetID) {
       curr->next = temp->next;
       free(temp->data);
       free(temp);
-      q->count--;
+      q->count = q->count - 1;
 
-      return true;
+      return TRUE;
     }
     else {
       curr = temp;
@@ -160,6 +160,8 @@ bool qACK_dequeue(queueACK*, uint16_t targetID) {
     }
   }
 
-  return false;
+  return FALSE;
 
 }
+
+#endif
