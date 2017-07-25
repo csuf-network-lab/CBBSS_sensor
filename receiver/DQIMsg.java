@@ -10,7 +10,7 @@ public class DQIMsg extends net.tinyos.message.Message {
     public static final int DEFAULT_MESSAGE_SIZE = 20;
 
     /** The Active Message type associated with this message. */
-    public static final int AM_TYPE = 0;
+    public static final int AM_TYPE = 1;
 
     /** Create a new DQIMsg of size 20. */
     public DQIMsg() {

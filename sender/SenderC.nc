@@ -5,7 +5,7 @@
 #include "AckQueue.h"
 
 #define TIMER_PERIOD_MILLI 50
-#define ACKTIMER_PERIOD_MILLI 10
+#define ACKTIMER_PERIOD_MILLI 3000
 
 module SenderC {
   uses interface AMSend        as AMSendACK;
@@ -58,7 +58,7 @@ implementation {
     priorityCutoff  = 1;
     radioBusy       = FALSE;
     readingsIndex   = 2;
-    ACKCounter      = 0;
+    ACKCounter      = 1;
 
     // Initialize the buffers
     pq_init(&nonPriorityBuffer);
@@ -81,13 +81,13 @@ implementation {
   * This event is triggered every time the allotted, specified time interval has
   * elapsed.
   *****************************************************************************/
-  event void ACKTimer.fired() {
+  void ACKStart() {
     error_t error;
     uint16_t   attemptNum, i;
     SensorMsg* senMsg, *tempS;
     DQIMsg*    dqiMsg, *tempD;
 
-    if (ACKCounter % 2 == 0) {
+    //if (ACKCounter % 2 == 0) {
       //check Sensor ACK queue
       if (ACKQueue_Sensor->count != 0) {
         attemptNum = qACK_frontAttempts(ACKQueue_Sensor);
@@ -126,8 +126,8 @@ implementation {
           free(tempS);
         }
       }
-    }
-    else if (ACKCounter % 5 == 0) {
+    //}
+   // else if (ACKCounter % 5 == 0) {
       //check DQI ACK queue
       if (ACKQueue_DQI->count != 0) {
         attemptNum = qACK_frontAttempts(ACKQueue_DQI);
@@ -164,11 +164,13 @@ implementation {
           free(tempD);
         }
       }
-    }
+    //}
 
-    ACKCounter++;
+    //ACKCounter++;
 
   }
+
+  event void ACKTimer.fired() {}
 
   /*****************************************************************************
   * This event is triggered every time the allotted, specified time interval has
@@ -176,6 +178,8 @@ implementation {
   *****************************************************************************/
   event void Timer.fired() {
     uint8_t randomNum;
+
+
 
     // Start the DQI process
     if (!DQISamplingFlag) {
@@ -190,6 +194,8 @@ implementation {
       getReading();
     }
     else {                  // 30%
+      if (ACKQueue_Sensor->count != 0 || ACKQueue_DQI->count != 0) 
+        ACKStart();
       sendSensorMsg();
     }
   }
@@ -221,6 +227,8 @@ implementation {
         }
         else if (msg->msgType == 1) {
           qACK_dequeue(ACKQueue_Sensor, msg->msgId);
+           
+            //
         }
 
         // Toggle the red LED
@@ -258,7 +266,7 @@ implementation {
         if (msg->feedback == 1) {
           priorityCutoff++;
         }
-
+        /*
         //send ACK
         ack =
           (ACKMsg*) call PacketACK.getPayload(&ackPacket, sizeof(ACKMsg));
@@ -273,6 +281,7 @@ implementation {
         }
         // Toggle the red LED
         //call Leds.led0Toggle();
+        */
       }
     }
 
@@ -539,6 +548,9 @@ implementation {
 
     //add the mesage to the ack queue
     msgACK = (DQIMsg*)malloc(sizeof(DQIMsg));
+    for (i = 0; i < 5; i++) {
+      msgACK->values[i] = msg->values[i];
+    }
     msgACK->sensorId      = msg->sensorId; 
     msgACK->msgId         = msg->msgId; 
     msgACK->priorityCount = msg->priorityCount; 
@@ -613,6 +625,8 @@ implementation {
       radioBusy = TRUE;
       call Leds.led1Toggle();
     }
+
+    if (priority != 1) return;
 
     //add the mesage to the ack queue
     msgACK = (SensorMsg*)malloc(sizeof(SensorMsg));

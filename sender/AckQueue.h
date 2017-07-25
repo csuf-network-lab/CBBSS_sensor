@@ -143,6 +143,15 @@ bool qACK_dequeue(queueACK* q, uint16_t targetID) {
 
   if (temp == NULL) return FALSE;
 
+  if (curr->msgID == targetID) {
+      q->front = temp->next;
+      free(curr->data);
+      free(curr);
+      q->count = q->count - 1;
+
+      return TRUE;
+  }
+
   temp = temp->next;
 
   while (temp != NULL) {

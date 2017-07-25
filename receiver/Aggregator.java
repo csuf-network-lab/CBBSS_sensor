@@ -44,6 +44,7 @@ public class Aggregator {
       public void messageReceived(int toAddress, Message message) {
         boolean     spFlag;
         DQIMsg      msg;
+        ACKMsg      ack;
         FeedbackMsg feedback;
         int         endId, i, msgId, priorityCount, sensorId, startId;
         int[]       values;
@@ -91,6 +92,16 @@ public class Aggregator {
         if (feedback != null) {
           sendFeedbackMsg(feedback);
         }
+
+        //send ack message to sensor
+        ack = new ACKMsg();
+        ack.set_sensorId(sensorId);
+        ack.set_msgId(msgId);
+        ack.set_msgType(0);
+
+        System.out.print("\tACK=  " + msgId);
+
+        sendACKMsg(ack);
       }
     });
 
@@ -100,6 +111,7 @@ public class Aggregator {
         boolean   spFlag;
         int       i, j, msgId, readings[], sensorId, tag, times[];
         SensorMsg msg;
+        ACKMsg ack;
 
         // Cast the message to the correct data type
         msg = (SensorMsg) message;
@@ -161,6 +173,37 @@ public class Aggregator {
           chart.updateXYSeries("key", x, y, null);
           chartWrapper.repaintChart();
         }
+
+        if (tag == 1) {
+          //send ack message to sensor
+ack = new ACKMsg();
+          
+          ack.set_sensorId(sensorId);
+          ack.set_msgId(msgId);
+          ack.set_msgType(1);
+
+          sendACKMsg(ack);
+        }
+      }
+    });
+
+    // Register an anonymous listener for ACK messages
+    // only needed if sensors start sending ACK messages
+    mote.registerListener(new ACKMsg(), new MessageListener() {
+      public void messageReceived(int toAddress, Message message) {
+        /*
+        boolean     spFlag;
+        ACKMsg      msg;
+        int         msgType, msgId, sensorId;
+
+        // Cast the message to the correct data type
+        msg = (ACKMsg) message;
+
+        // Retrieve the message fields
+        sensorId      = msg.get_sensorId();
+        msgId         = msg.get_msgId();
+        msgType       = msg.get_msgType();
+        */
       }
     });
   }
@@ -169,6 +212,18 @@ public class Aggregator {
   * 
   *****************************************************************************/
   public void sendFeedbackMsg(FeedbackMsg msg) {
+    try {
+      mote.send(mote.TOS_BCAST_ADDR, msg);
+    }
+    catch (IOException e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  /*****************************************************************************
+  * 
+  *****************************************************************************/
+  public void sendACKMsg(ACKMsg msg) {
     try {
       mote.send(mote.TOS_BCAST_ADDR, msg);
     }
