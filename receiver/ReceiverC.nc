@@ -77,24 +77,22 @@ implementation {
   /*****************************************************************************
   * This event is triggered every time the allotted, specified time interval has
   * elapsed. Calls the serial transmission of any messages in the buffers.
-  * Priority is given to DQI messages.
+  * Priority is given to ACK messages.
   *****************************************************************************/
   event void Timer.fired() {
-    // Transmit a DQI message if the DQI buffer is not empty
-    if (!qDQI_isEmpty(&bufferDQI)) {
-      sendDQIMsg();
-    }
 
-    //otherwise, transmit a ACK message if the sensor buffer is not empty
-    else if (!qACK_isEmpty(&bufferACK)) {
+    //transmit a ACK message if the ACK buffer is not empty
+    if (!qACK_isEmpty(&bufferACK)) {
       sendACKtoPC();
     }
-
+    // Otherwise, transmit a DQI message if the DQI buffer is not empty
+    else if (!qDQI_isEmpty(&bufferDQI)) {
+      sendDQIMsg();
+    }
     // Otherwise, transmit a sensor message if the sensor buffer is not empty
     else if (!qSensor_isEmpty(&bufferSensor)) {
       sendSensorMsg();
     }
-
 
   }
 
@@ -556,9 +554,7 @@ implementation {
     ACKMsg      *msgSend;
 
     // Get a reference to the feedback packet
-    msgSend = (ACKMsg*)
-              call RadioPacketACK.getPayload
-              (&packetACKtoSensor, sizeof(ACKMsg));
+    msgSend = (ACKMsg*) call RadioPacketACK.getPayload(&packetACKtoSensor, sizeof(ACKMsg));
 
     // Ensure the reference is valid
     if (msgSend == NULL) {

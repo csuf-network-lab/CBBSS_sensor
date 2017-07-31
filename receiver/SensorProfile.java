@@ -23,7 +23,7 @@ public class SensorProfile {
   private static final int         WINDOW_SIZE = 100;
   private              int         bufferOffset, dataRate, endId, importance,
                                    priorityCount, priorityLevel, samplingRate,
-                                   sensorId, startId;
+                                   sensorId, startId, duplicates = 0;
   private              String      dataType;
 
   /*****************************************************************************
@@ -61,10 +61,14 @@ public class SensorProfile {
 
     position = id + bufferOffset;
 
+    if(buffer[position].isEstimate == false) duplicates++;
+
     buffer[position].data       = data;
     buffer[position].id         = id;
     buffer[position].isEstimate = false;
     buffer[position].isPriority = priority;
+
+    if (position % 100 == 0) System.out.println("duplicates = " + duplicates/5 + "\n\n\n");
   }
 
   /*****************************************************************************

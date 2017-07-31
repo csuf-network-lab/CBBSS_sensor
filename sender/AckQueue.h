@@ -6,8 +6,8 @@
 //max sizes for ack queue in each message type
 #define SEN_ACKQUEUE_SIZE 15
 #define DQI_ACKQUEUE_SIZE 5
-#define SEN_ATTEMPTS      3
-#define DQI_ATTEMPTS      3
+#define SEN_ATTEMPTS      2
+#define DQI_ATTEMPTS      2
 
 /*******************************************************************************
 * A queue data structure for Acknowledgment messages. Uses the FIFO policy.
@@ -36,6 +36,7 @@ void*    qACK_front(queueACK*);
 void     qACK_enqueue(queueACK*, void*, uint16_t, uint16_t);
 void     qACK_init(queueACK*);
 bool     qACK_dequeue(queueACK*, uint16_t);
+void     qACK_pop(queueACK*);
 
 
 /*******************************************************************************
@@ -63,24 +64,27 @@ uint16_t qACK_frontAttempts(queueACK* q) {
 void* qACK_front(queueACK* q) {
 
   void* d;
-  Node* tempFront;
+  //Node* tempFront;
 
   // Cannot dequeue from an empty queue
-  if (q->count == 0) {
+  if (q->front == NULL) {
     return NULL;
   }
 
   // Save the message at the front
   d = q->front->data;
 
-  tempFront = q->front;
+  //update attempt count
+  q->front->attempt += 1;
+
+  //tempFront = q->front;
 
   // Update
-  q->front = q->front->next;
+  //q->front = q->front->next;
 
-  q->count--;
+  //q->count--;
 
-  free(tempFront);
+  //free(tempFront);
 
   // Return
   return d;
@@ -171,6 +175,22 @@ bool qACK_dequeue(queueACK* q, uint16_t targetID) {
 
   return FALSE;
 
+}
+
+void qACK_pop(queueACK* q) {
+  Node* tempFront;
+
+  if (q->front == NULL) return;
+
+  tempFront = q->front;
+  q->front = q->front->next;
+
+  free(tempFront->data);
+  free(tempFront);
+
+  q->count -= 1;
+
+  return;
 }
 
 #endif

@@ -60,6 +60,14 @@ public class Aggregator {
         endId         = msg.get_endId();
         values        = msg.get_values();
 
+        //send ack message to sensor
+        ack = new ACKMsg();
+        ack.set_sensorId(sensorId);
+        ack.set_msgId(msg.get_msgId());
+        ack.set_msgType(0);
+
+        sendACKMsg(ack);
+
         // Print out the contents
         System.out.println("DQIMsg received:");
         System.out.println("\tsensorId = " + sensorId);
@@ -93,15 +101,7 @@ public class Aggregator {
           sendFeedbackMsg(feedback);
         }
 
-        //send ack message to sensor
-        ack = new ACKMsg();
-        ack.set_sensorId(sensorId);
-        ack.set_msgId(msgId);
-        ack.set_msgType(0);
 
-        System.out.print("\tACK=  " + msgId);
-
-        sendACKMsg(ack);
       }
     });
 
@@ -122,6 +122,17 @@ public class Aggregator {
         tag      = msg.get_tag();
         readings = msg.get_readings();
         times    = msg.get_times();
+
+        if (tag == 1) {
+          //send ack message to sensor
+          ack = new ACKMsg();
+          
+          ack.set_sensorId(sensorId);
+          ack.set_msgId(msg.get_msgId());
+          ack.set_msgType(1);
+
+          sendACKMsg(ack);
+        }
 
         // Print out the contents
         System.out.println("SensorMsg received:");
@@ -174,16 +185,7 @@ public class Aggregator {
           chartWrapper.repaintChart();
         }
 
-        if (tag == 1) {
-          //send ack message to sensor
-ack = new ACKMsg();
-          
-          ack.set_sensorId(sensorId);
-          ack.set_msgId(msgId);
-          ack.set_msgType(1);
 
-          sendACKMsg(ack);
-        }
       }
     });
 

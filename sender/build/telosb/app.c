@@ -2075,16 +2075,19 @@ static void *qACK_front(queueACK *arg_0x4116ce20);
 static void qACK_enqueue(queueACK *arg_0x4116a3c8, void *arg_0x4116a540, uint16_t arg_0x4116a6f0, uint16_t arg_0x4116a8a0);
 static void qACK_init(queueACK *arg_0x4116ada8);
 static bool qACK_dequeue(queueACK *arg_0x41169318, uint16_t arg_0x411694c8);
-#line 50
+static void qACK_pop(queueACK *arg_0x411699b8);
+#line 51
 static inline uint16_t qACK_frontAttempts(queueACK *q);
-#line 63
+#line 64
 static void *qACK_front(queueACK *q);
-#line 97
+#line 101
 static void qACK_enqueue(queueACK *q, void *d, uint16_t ID, uint16_t attemptNum);
-#line 124
+#line 128
 static void qACK_init(queueACK *q);
-#line 140
+#line 144
 static bool qACK_dequeue(queueACK *q, uint16_t targetID);
+#line 180
+static void qACK_pop(queueACK *q);
 enum CC2420ActiveMessageC____nesc_unnamed4297 {
   CC2420ActiveMessageC__CC2420_AM_SEND_ID = 0U
 };
@@ -7329,7 +7332,7 @@ static inline void /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__start
 
 
 
-static void /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__Timer__startPeriodic(uint8_t num, uint32_t dt);
+static inline void /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__Timer__startPeriodic(uint8_t num, uint32_t dt);
 #line 204
 static inline void /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__Timer__default__fired(uint8_t num);
 # 58 "../../../tos/lib/timer/CounterToLocalTimeC.nc"
@@ -8188,8 +8191,6 @@ static void SenderC__Leds__led1Toggle(void );
 static void SenderC__Leds__led2Toggle(void );
 # 64 "../../../tos/lib/timer/Timer.nc"
 static void SenderC__Timer__startPeriodic(uint32_t dt);
-#line 64
-static void SenderC__ACKTimer__startPeriodic(uint32_t dt);
 # 27 "SenderC.nc"
 bool SenderC__radioBusy;
 message_t SenderC__sensorPacket;
@@ -8203,7 +8204,7 @@ pqueue SenderC__priorityBuffer;
 uint8_t SenderC__priorityCutoff;
 uint16_t SenderC__currentReading;
 #line 31
-uint16_t SenderC__msgId;
+uint16_t SenderC__msgIdCounter;
 #line 31
 uint16_t SenderC__nextNextReading;
 #line 31
@@ -8222,12 +8223,16 @@ SenderC__readingsIndex;
 #line 32
 #line 31
 uint16_t 
-SenderC__ACKCounter;
+SenderC__ACKCounterDQI;
+#line 32
+#line 31
+uint16_t 
+SenderC__ACKCounterSen;
 
 
-queueACK *SenderC__ACKQueue_DQI;
+queueACK SenderC__ACKQueue_DQI;
 #line 35
-queueACK *SenderC__ACKQueue_Sensor;
+queueACK SenderC__ACKQueue_Sensor;
 
 
 static inline uint8_t SenderC__calculatePriority(void );
@@ -8254,7 +8259,7 @@ uint16_t SenderC__DQIValues[5];
 
 
 
-static inline void SenderC__DQIAdd(sample arg_0x41188bd0);
+static inline void SenderC__DQIAdd(sample arg_0x4118a8a8);
 static inline void SenderC__DQICalculate(void );
 static void SenderC__DQIInit(void );
 static inline bool SenderC__DQIStart(void );
@@ -8271,9 +8276,9 @@ static void SenderC__DQIInit(void );
 static inline bool SenderC__DQIStart(void );
 # 50 "SenderC.nc"
 static inline void SenderC__Boot__booted(void );
-#line 84
+#line 82
 static inline void SenderC__ACKStart(void );
-#line 173
+#line 170
 static inline void SenderC__ACKTimer__fired(void );
 
 
@@ -8281,29 +8286,29 @@ static inline void SenderC__ACKTimer__fired(void );
 
 
 static inline void SenderC__Timer__fired(void );
-#line 213
+#line 211
 static inline message_t *
 SenderC__ReceiveACK__receive(message_t *message, void *payload, uint8_t length);
-#line 252
+#line 250
 static inline message_t *
 SenderC__ReceiveFeedback__receive(message_t *message, void *payload, uint8_t length);
-#line 301
+#line 299
 static inline void SenderC__AMSendACK__sendDone(message_t *message, error_t error);
-#line 318
+#line 316
 static inline void SenderC__AMSendDQI__sendDone(message_t *message, error_t error);
-#line 335
+#line 333
 static inline void SenderC__AMSendSensor__sendDone(message_t *message, error_t error);
-#line 351
+#line 349
 static inline void SenderC__SplitControl__startDone(error_t error);
-#line 368
+#line 366
 static inline void SenderC__SplitControl__stopDone(error_t error);
-#line 381
+#line 379
 static inline uint8_t SenderC__calculatePriority(void );
-#line 462
+#line 460
 static inline void SenderC__getReading(void );
-#line 505
+#line 503
 static inline void SenderC__sendDQIMsg(void );
-#line 577
+#line 571
 static inline void SenderC__sendSensorMsg(void );
 # 408 "../../../tos/chips/msp430/msp430hardware.h"
 static inline  void __nesc_enable_interrupt(void )
@@ -12639,9 +12644,9 @@ inline static bool RealMainP__Scheduler__runNextTask(void ){
 #line 65
 }
 #line 65
-# 301 "SenderC.nc"
+# 299 "SenderC.nc"
 static inline void SenderC__AMSendACK__sendDone(message_t *message, error_t error)
-#line 301
+#line 299
 {
   if (&SenderC__ackPacket == message) {
       SenderC__radioBusy = FALSE;
@@ -12701,9 +12706,9 @@ inline static void SenderC__Leds__led2Toggle(void ){
 #line 100
 }
 #line 100
-# 318 "SenderC.nc"
+# 316 "SenderC.nc"
 static inline void SenderC__AMSendDQI__sendDone(message_t *message, error_t error)
-#line 318
+#line 316
 {
   if (&SenderC__dqiPacket == message) {
       SenderC__radioBusy = FALSE;
@@ -12764,9 +12769,9 @@ inline static void SenderC__Leds__led1Toggle(void ){
 #line 83
 }
 #line 83
-# 335 "SenderC.nc"
+# 333 "SenderC.nc"
 static inline void SenderC__AMSendSensor__sendDone(message_t *message, error_t error)
-#line 335
+#line 333
 {
   if (&SenderC__sensorPacket == message) {
       SenderC__radioBusy = FALSE;
@@ -14247,15 +14252,15 @@ inline static void * SenderC__PacketSensor__getPayload(message_t * msg, uint8_t 
 #line 126
 }
 #line 126
-# 577 "SenderC.nc"
+# 571 "SenderC.nc"
 static inline void SenderC__sendSensorMsg(void )
-#line 577
+#line 571
 {
   bool priority;
   error_t error;
   sample s;
   SensorMsg *msg;
-#line 581
+#line 575
   SensorMsg *msgACK;
   uint8_t i;
 
@@ -14293,8 +14298,31 @@ static inline void SenderC__sendSensorMsg(void )
 
 
   __nesc_hton_uint16(msg->sensorId.nxdata, TOS_NODE_ID);
-  __nesc_hton_uint16(msg->msgId.nxdata, SenderC__msgId++);
+  __nesc_hton_uint16(msg->msgId.nxdata, SenderC__msgIdCounter++);
   __nesc_hton_uint8(msg->tag.nxdata, priority);
+
+  if (priority == 1) {
+
+
+      msgACK = (SensorMsg *)malloc(sizeof(SensorMsg ));
+      __nesc_hton_uint16(msgACK->sensorId.nxdata, __nesc_ntoh_uint16(msg->sensorId.nxdata));
+      __nesc_hton_uint16(msgACK->msgId.nxdata, __nesc_ntoh_uint16(msg->msgId.nxdata));
+      __nesc_hton_uint8(msgACK->tag.nxdata, __nesc_ntoh_uint8(msg->tag.nxdata));
+      for (i = 0; i < 5; i++) {
+          __nesc_hton_uint16(msgACK->readings[i].nxdata, __nesc_ntoh_uint16(msg->readings[i].nxdata));
+          __nesc_hton_uint16(msgACK->times[i].nxdata, __nesc_ntoh_uint16(msg->times[i].nxdata));
+        }
+
+
+
+
+      if (SenderC__ACKQueue_Sensor.count == 15) {
+#line 630
+        qACK_pop(&SenderC__ACKQueue_Sensor);
+        }
+      qACK_enqueue(&SenderC__ACKQueue_Sensor, (void *)msgACK, __nesc_ntoh_uint16(msg->msgId.nxdata), 0);
+    }
+
 
 
   error = SenderC__AMSendSensor__send(
@@ -14303,29 +14331,6 @@ static inline void SenderC__sendSensorMsg(void )
       SenderC__radioBusy = TRUE;
       SenderC__Leds__led1Toggle();
     }
-
-  if (priority != 1) {
-#line 629
-    return;
-    }
-
-  msgACK = (SensorMsg *)malloc(sizeof(SensorMsg ));
-  __nesc_hton_uint16(msgACK->sensorId.nxdata, __nesc_ntoh_uint16(msg->sensorId.nxdata));
-  __nesc_hton_uint16(msgACK->msgId.nxdata, __nesc_ntoh_uint16(msg->msgId.nxdata));
-  __nesc_hton_uint8(msgACK->tag.nxdata, __nesc_ntoh_uint8(msg->tag.nxdata));
-  for (i = 0; i < 5; i++) {
-      __nesc_hton_uint16(msgACK->readings[i].nxdata, __nesc_ntoh_uint16(msg->readings[i].nxdata));
-      __nesc_hton_uint16(msgACK->times[i].nxdata, __nesc_ntoh_uint16(msg->times[i].nxdata));
-    }
-
-
-
-
-  if (SenderC__ACKQueue_Sensor->count == 15) {
-#line 644
-    qACK_front(SenderC__ACKQueue_Sensor);
-    }
-  qACK_enqueue(SenderC__ACKQueue_Sensor, (void *)msgACK, __nesc_ntoh_uint16(msg->msgId.nxdata), 0);
 }
 
 # 80 "../../../tos/interfaces/AMSend.nc"
@@ -14358,36 +14363,43 @@ inline static void * SenderC__PacketDQI__getPayload(message_t * msg, uint8_t len
 #line 126
 }
 #line 126
-# 50 "AckQueue.h"
+# 51 "AckQueue.h"
 static inline uint16_t qACK_frontAttempts(queueACK *q)
-#line 50
+#line 51
 {
   return q->front->attempt;
 }
 
-# 84 "SenderC.nc"
+# 82 "SenderC.nc"
 static inline void SenderC__ACKStart(void )
-#line 84
+#line 82
 {
   error_t error;
   uint16_t attemptNum;
-#line 86
+#line 84
   uint16_t i;
   SensorMsg *senMsg;
-#line 87
+#line 85
   SensorMsg *tempS;
   DQIMsg *dqiMsg;
-#line 88
+#line 86
   DQIMsg *tempD;
 
+  if (SenderC__ACKQueue_Sensor.count != 0) {
+#line 88
+    SenderC__ACKCounterSen++;
+    }
+#line 89
+  if (SenderC__ACKQueue_DQI.count != 0) {
+#line 89
+    SenderC__ACKCounterDQI++;
+    }
 
 
-  if (SenderC__ACKQueue_Sensor->count != 0) {
-      attemptNum = qACK_frontAttempts(SenderC__ACKQueue_Sensor);
-      tempS = (SensorMsg *)qACK_front(SenderC__ACKQueue_Sensor);
-      if (attemptNum < 3) {
-          qACK_enqueue(SenderC__ACKQueue_Sensor, (void *)tempS, __nesc_ntoh_uint16(tempS->msgId.nxdata), attemptNum + 1);
-        }
+
+  if (SenderC__ACKQueue_Sensor.count != 0 && SenderC__ACKCounterSen % 5 == 0) {
+      attemptNum = qACK_frontAttempts(&SenderC__ACKQueue_Sensor);
+      tempS = (SensorMsg *)qACK_front(&SenderC__ACKQueue_Sensor);
 
       senMsg = (SensorMsg *)
       SenderC__PacketSensor__getPayload(&SenderC__sensorPacket, sizeof(SensorMsg ));
@@ -14415,19 +14427,17 @@ static inline void SenderC__ACKStart(void )
           SenderC__Leds__led1Toggle();
         }
 
-      if (attemptNum >= 3) {
-          free(tempS);
+      if (attemptNum >= 2) {
+          qACK_pop(&SenderC__ACKQueue_Sensor);
         }
     }
 
 
 
-  if (SenderC__ACKQueue_DQI->count != 0) {
-      attemptNum = qACK_frontAttempts(SenderC__ACKQueue_DQI);
-      tempD = (DQIMsg *)qACK_front(SenderC__ACKQueue_DQI);
-      if (attemptNum < 3) {
-          qACK_enqueue(SenderC__ACKQueue_DQI, (void *)tempD, __nesc_ntoh_uint16(tempD->msgId.nxdata), attemptNum + 1);
-        }
+
+  if (SenderC__ACKQueue_DQI.count != 0 && SenderC__ACKCounterDQI % 10 == 0) {
+      attemptNum = qACK_frontAttempts(&SenderC__ACKQueue_DQI);
+      tempD = (DQIMsg *)qACK_front(&SenderC__ACKQueue_DQI);
 
       dqiMsg = (DQIMsg *)SenderC__PacketDQI__getPayload(&SenderC__dqiPacket, sizeof(DQIMsg ));
 
@@ -14453,15 +14463,15 @@ static inline void SenderC__ACKStart(void )
         }
 
 
-      if (attemptNum >= 3) {
-          free(tempD);
+      if (attemptNum >= 2) {
+          qACK_pop(&SenderC__ACKQueue_DQI);
         }
     }
 }
 
-#line 505
+#line 503
 static inline void SenderC__sendDQIMsg(void )
-#line 505
+#line 503
 {
   DQIMsg *msg;
   DQIMsg *msgACK;
@@ -14494,17 +14504,10 @@ static inline void SenderC__sendDQIMsg(void )
       __nesc_hton_uint16(msg->values[i].nxdata, SenderC__DQIValues[i]);
     }
   __nesc_hton_uint16(msg->sensorId.nxdata, TOS_NODE_ID);
-  __nesc_hton_uint16(msg->msgId.nxdata, SenderC__msgId++);
+  __nesc_hton_uint16(msg->msgId.nxdata, SenderC__msgIdCounter++);
   __nesc_hton_uint16(msg->priorityCount.nxdata, priorityCount);
   __nesc_hton_uint16(msg->startId.nxdata, SenderC__DQIStartId);
   __nesc_hton_uint16(msg->endId.nxdata, SenderC__DQIEndId);
-
-
-  error = SenderC__AMSendDQI__send(AM_BROADCAST_ADDR, &SenderC__dqiPacket, sizeof(DQIMsg ));
-  if (error == SUCCESS) {
-      SenderC__radioBusy = TRUE;
-      SenderC__Leds__led2Toggle();
-    }
 
 
   msgACK = (DQIMsg *)malloc(sizeof(DQIMsg ));
@@ -14517,15 +14520,18 @@ static inline void SenderC__sendDQIMsg(void )
   __nesc_hton_uint16(msgACK->startId.nxdata, __nesc_ntoh_uint16(msg->startId.nxdata));
   __nesc_hton_uint16(msgACK->endId.nxdata, __nesc_ntoh_uint16(msg->endId.nxdata));
 
-
-
-
-  if (SenderC__ACKQueue_DQI->count == 5) {
-#line 563
-    qACK_front(SenderC__ACKQueue_DQI);
+  if (SenderC__ACKQueue_DQI.count == 5) {
+#line 551
+    qACK_pop(&SenderC__ACKQueue_DQI);
     }
-  qACK_enqueue(SenderC__ACKQueue_DQI, (void *)msgACK, __nesc_ntoh_uint16(msg->msgId.nxdata), 0);
+  qACK_enqueue(&SenderC__ACKQueue_DQI, (void *)msgACK, __nesc_ntoh_uint16(msg->msgId.nxdata), 0);
 
+
+  error = SenderC__AMSendDQI__send(AM_BROADCAST_ADDR, &SenderC__dqiPacket, sizeof(DQIMsg ));
+  if (error == SUCCESS) {
+      SenderC__radioBusy = TRUE;
+      SenderC__Leds__led2Toggle();
+    }
 
 
   SenderC__DQIInit();
@@ -14630,17 +14636,17 @@ static __inline int abs(int __x)
   return __x < 0 ? -__x : __x;
 }
 
-# 381 "SenderC.nc"
+# 379 "SenderC.nc"
 static inline uint8_t SenderC__calculatePriority(void )
-#line 381
+#line 379
 {
   uint8_t priority;
   uint16_t diff0;
-#line 383
+#line 381
   uint16_t diff1;
-#line 383
+#line 381
   uint16_t diff2;
-#line 383
+#line 381
   uint16_t diff3;
 
 
@@ -14658,7 +14664,7 @@ static inline uint8_t SenderC__calculatePriority(void )
 
 
     if (
-#line 397
+#line 395
     SenderC__currentReading > SenderC__prevReading && 
     SenderC__currentReading > SenderC__nextReading && 
     SenderC__prevReading > SenderC__prevPrevReading && 
@@ -14668,7 +14674,7 @@ static inline uint8_t SenderC__calculatePriority(void )
     else {
 
       if (
-#line 403
+#line 401
       SenderC__currentReading < SenderC__prevReading && 
       SenderC__currentReading < SenderC__nextReading && 
       SenderC__prevReading < SenderC__prevPrevReading && 
@@ -14681,12 +14687,12 @@ static inline uint8_t SenderC__calculatePriority(void )
             priority = 1;
           }
         else {
-#line 414
+#line 412
           if (SenderC__currentReading >= SenderC__prevReading && SenderC__currentReading > SenderC__nextReading) {
               priority = 1;
             }
           else {
-#line 417
+#line 415
             if (SenderC__currentReading > SenderC__prevReading && SenderC__currentReading >= SenderC__nextReading) {
                 priority = 1;
               }
@@ -14696,12 +14702,12 @@ static inline uint8_t SenderC__calculatePriority(void )
                   priority = 1;
                 }
               else {
-#line 425
+#line 423
                 if (SenderC__currentReading <= SenderC__prevReading && SenderC__currentReading < SenderC__nextReading) {
                     priority = 1;
                   }
                 else {
-#line 428
+#line 426
                   if (SenderC__currentReading < SenderC__prevReading && SenderC__currentReading <= SenderC__nextReading) {
                       priority = 1;
                     }
@@ -14711,7 +14717,7 @@ static inline uint8_t SenderC__calculatePriority(void )
                         priority = 2;
                       }
                     else {
-#line 436
+#line 434
                       if (diff1 > diff0 && diff2 > diff3) {
                           priority = 2;
                         }
@@ -14721,7 +14727,7 @@ static inline uint8_t SenderC__calculatePriority(void )
                             priority = 3;
                           }
                         else {
-#line 444
+#line 442
                           if (diff1 > 2 * diff0 && diff1 > 2 * diff2) {
                               priority = 3;
                             }
@@ -14742,7 +14748,7 @@ static inline uint8_t SenderC__calculatePriority(void )
         }
       }
     }
-#line 454
+#line 452
   return priority;
 }
 
@@ -14752,7 +14758,7 @@ static inline uint8_t SenderC__calculatePriority(void )
 
 
 static inline void SenderC__getReading(void )
-#line 462
+#line 460
 {
   sample s;
   uint8_t priority;
@@ -14807,9 +14813,9 @@ static inline bool SenderC__DQIStart(void )
   return TRUE;
 }
 
-# 179 "SenderC.nc"
+# 176 "SenderC.nc"
 static inline void SenderC__Timer__fired(void )
-#line 179
+#line 176
 {
   uint8_t randomNum;
 
@@ -14824,21 +14830,21 @@ static inline void SenderC__Timer__fired(void )
   randomNum = rand() % 10;
 
 
-  if (randomNum <= 6) {
-      SenderC__getReading();
+
+  SenderC__getReading();
+
+
+
+  if (SenderC__ACKQueue_Sensor.count != 0 || SenderC__ACKQueue_DQI.count != 0) {
+    SenderC__ACKStart();
     }
-  else {
-      if (SenderC__ACKQueue_Sensor->count != 0 || SenderC__ACKQueue_DQI->count != 0) {
-        SenderC__ACKStart();
-        }
-#line 199
-      SenderC__sendSensorMsg();
-    }
+#line 197
+  SenderC__sendSensorMsg();
 }
 
-#line 173
+#line 170
 static inline void SenderC__ACKTimer__fired(void )
-#line 173
+#line 170
 {
 }
 
@@ -15116,10 +15122,10 @@ inline static message_t * CC2420ActiveMessageP__Snoop__receive(am_id_t arg_0x410
 #line 78
 }
 #line 78
-# 252 "SenderC.nc"
+# 250 "SenderC.nc"
 static inline message_t *
 SenderC__ReceiveFeedback__receive(message_t *message, void *payload, uint8_t length)
-#line 253
+#line 251
 {
   FeedbackMsg *msg;
   ACKMsg *ack;
@@ -15138,14 +15144,14 @@ SenderC__ReceiveFeedback__receive(message_t *message, void *payload, uint8_t len
             }
         }
     }
-#line 288
+#line 286
   return message;
 }
 
-#line 213
+#line 211
 static inline message_t *
 SenderC__ReceiveACK__receive(message_t *message, void *payload, uint8_t length)
-#line 214
+#line 212
 {
   ACKMsg *msg;
 
@@ -15158,12 +15164,12 @@ SenderC__ReceiveACK__receive(message_t *message, void *payload, uint8_t length)
       if (__nesc_ntoh_uint16(msg->sensorId.nxdata) == TOS_NODE_ID) {
 
           if (__nesc_ntoh_uint16(msg->msgType.nxdata) == 0) {
-              qACK_dequeue(SenderC__ACKQueue_DQI, __nesc_ntoh_uint16(msg->msgId.nxdata));
+              qACK_dequeue(&SenderC__ACKQueue_DQI, __nesc_ntoh_uint16(msg->msgId.nxdata));
             }
           else {
-#line 228
+#line 226
             if (__nesc_ntoh_uint16(msg->msgType.nxdata) == 1) {
-                qACK_dequeue(SenderC__ACKQueue_Sensor, __nesc_ntoh_uint16(msg->msgId.nxdata));
+                qACK_dequeue(&SenderC__ACKQueue_Sensor, __nesc_ntoh_uint16(msg->msgId.nxdata));
               }
             }
         }
@@ -17743,9 +17749,9 @@ static inline void CC2420CsmaP__sendDone_task__runTask(void )
   CC2420CsmaP__Send__sendDone(CC2420CsmaP__m_msg, packetErr);
 }
 
-# 368 "SenderC.nc"
+# 366 "SenderC.nc"
 static inline void SenderC__SplitControl__stopDone(error_t error)
-#line 368
+#line 366
 {
 }
 
@@ -17779,28 +17785,55 @@ inline static error_t SenderC__SplitControl__start(void ){
 #line 104
 }
 #line 104
-# 64 "../../../tos/lib/timer/Timer.nc"
-inline static void SenderC__ACKTimer__startPeriodic(uint32_t dt){
-#line 64
-  /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__Timer__startPeriodic(2U, dt);
-#line 64
+# 67 "../../../tos/interfaces/TaskBasic.nc"
+inline static error_t /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__updateFromTimer__postTask(void ){
+#line 67
+  unsigned char __nesc_result;
+#line 67
+
+#line 67
+  __nesc_result = SchedulerBasicP__TaskBasic__postTask(/*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__updateFromTimer);
+#line 67
+
+#line 67
+  return __nesc_result;
+#line 67
 }
-#line 64
+#line 67
+# 144 "../../../tos/lib/timer/VirtualizeTimerC.nc"
+static inline void /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__startTimer(uint8_t num, uint32_t t0, uint32_t dt, bool isoneshot)
+{
+  /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__Timer_t *timer = &/*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__m_timers[num];
+
+#line 147
+  timer->t0 = t0;
+  timer->dt = dt;
+  timer->isoneshot = isoneshot;
+  timer->isrunning = TRUE;
+  /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__updateFromTimer__postTask();
+}
+
+static inline void /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__Timer__startPeriodic(uint8_t num, uint32_t dt)
+{
+  /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__startTimer(num, /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__TimerFrom__getNow(), dt, FALSE);
+}
+
+# 64 "../../../tos/lib/timer/Timer.nc"
 inline static void SenderC__Timer__startPeriodic(uint32_t dt){
 #line 64
   /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__Timer__startPeriodic(1U, dt);
 #line 64
 }
 #line 64
-# 351 "SenderC.nc"
+# 349 "SenderC.nc"
 static inline void SenderC__SplitControl__startDone(error_t error)
-#line 351
+#line 349
 {
   if (error == SUCCESS) {
-      SenderC__Timer__startPeriodic(50);
-      SenderC__ACKTimer__startPeriodic(3000);
+      SenderC__Timer__startPeriodic(100);
     }
-  else {
+  else 
+    {
       SenderC__SplitControl__start();
     }
 }
@@ -18055,34 +18088,6 @@ static inline void CC2420CsmaP__startDone_task__runTask(void )
   CC2420CsmaP__Resource__release();
   CC2420CsmaP__SplitControlState__forceState(CC2420CsmaP__S_STARTED);
   CC2420CsmaP__SplitControl__startDone(SUCCESS);
-}
-
-# 67 "../../../tos/interfaces/TaskBasic.nc"
-inline static error_t /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__updateFromTimer__postTask(void ){
-#line 67
-  unsigned char __nesc_result;
-#line 67
-
-#line 67
-  __nesc_result = SchedulerBasicP__TaskBasic__postTask(/*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__updateFromTimer);
-#line 67
-
-#line 67
-  return __nesc_result;
-#line 67
-}
-#line 67
-# 144 "../../../tos/lib/timer/VirtualizeTimerC.nc"
-static inline void /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__startTimer(uint8_t num, uint32_t t0, uint32_t dt, bool isoneshot)
-{
-  /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__Timer_t *timer = &/*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__m_timers[num];
-
-#line 147
-  timer->t0 = t0;
-  timer->dt = dt;
-  timer->isoneshot = isoneshot;
-  timer->isrunning = TRUE;
-  /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__updateFromTimer__postTask();
 }
 
 # 45 "../../../tos/interfaces/State.nc"
@@ -19213,7 +19218,7 @@ static inline void SenderC__Boot__booted(void )
 {
 
   SenderC__currentReading = 0;
-  SenderC__msgId = 1;
+  SenderC__msgIdCounter = 1;
   SenderC__nextNextReading = jogDataX[1];
   SenderC__nextReading = jogDataX[0];
   SenderC__prevPrevReading = 0;
@@ -19221,17 +19226,15 @@ static inline void SenderC__Boot__booted(void )
   SenderC__priorityCutoff = 1;
   SenderC__radioBusy = FALSE;
   SenderC__readingsIndex = 2;
-  SenderC__ACKCounter = 1;
+  SenderC__ACKCounterDQI = 1;
+  SenderC__ACKCounterSen = 0;
 
 
   pq_init(&SenderC__nonPriorityBuffer);
   pq_init(&SenderC__priorityBuffer);
 
-
-  SenderC__ACKQueue_DQI = (queueACK *)malloc(sizeof(queueACK ));
-  SenderC__ACKQueue_Sensor = (queueACK *)malloc(sizeof(queueACK ));
-  qACK_init(SenderC__ACKQueue_DQI);
-  qACK_init(SenderC__ACKQueue_Sensor);
+  qACK_init(&SenderC__ACKQueue_DQI);
+  qACK_init(&SenderC__ACKQueue_Sensor);
 
 
   SenderC__DQIInit();
@@ -21609,6 +21612,53 @@ static void *CC2420TinyosNetworkP__ActiveSend__getPayload(message_t *msg, uint8_
     }
 }
 
+# 180 "AckQueue.h"
+static void qACK_pop(queueACK *q)
+#line 180
+{
+  Node *tempFront;
+
+  if (q->front == (void *)0) {
+#line 183
+    return;
+    }
+  tempFront = q->front;
+  q->front = q->front->next;
+
+  free(tempFront->data);
+  free(tempFront);
+
+  q->count -= 1;
+
+  return;
+}
+
+#line 101
+static void qACK_enqueue(queueACK *q, void *d, uint16_t ID, uint16_t attemptNum)
+#line 101
+{
+
+  Node *temp = (Node *)malloc(sizeof(Node ));
+
+#line 104
+  temp->data = d;
+  temp->msgID = ID;
+  temp->attempt = attemptNum;
+  temp->next = (void *)0;
+
+  if (q->front == (void *)0) {
+      q->front = q->rear = temp;
+      q->count++;
+      return;
+    }
+
+  q->rear->next = temp;
+  q->rear = temp;
+  q->count++;
+
+  return;
+}
+
 # 53 "../../../tos/system/AMQueueEntryP.nc"
 static error_t /*SenderAppC.AMSendDQI.SenderC.AMQueueEntryP*/AMQueueEntryP__1__AMSend__send(am_addr_t dest, 
 message_t *msg, 
@@ -21679,68 +21729,6 @@ uint8_t len)
   return SUCCESS;
 }
 
-# 63 "AckQueue.h"
-static void *qACK_front(queueACK *q)
-#line 63
-{
-
-  void *d;
-  Node *tempFront;
-
-
-  if (q->count == 0) {
-      return (void *)0;
-    }
-
-
-  d = q->front->data;
-
-  tempFront = q->front;
-
-
-  q->front = q->front->next;
-
-  q->count--;
-
-  free(tempFront);
-
-
-  return d;
-}
-
-
-
-
-
-
-
-
-
-static void qACK_enqueue(queueACK *q, void *d, uint16_t ID, uint16_t attemptNum)
-#line 97
-{
-
-  Node *temp = (Node *)malloc(sizeof(Node ));
-
-#line 100
-  temp->data = d;
-  temp->msgID = ID;
-  temp->attempt = attemptNum;
-  temp->next = (void *)0;
-
-  if (q->front == (void *)0) {
-      q->front = q->rear = temp;
-      q->count++;
-      return;
-    }
-
-  q->rear->next = temp;
-  q->rear = temp;
-  q->count++;
-
-  return;
-}
-
 # 103 "DQI.h"
 static void SenderC__DQIInit(void )
 #line 103
@@ -21788,6 +21776,28 @@ static void pq_exchange(pqueue *p, uint16_t i, uint16_t j)
   s = p->heap[i];
   p->heap[i] = p->heap[j];
   p->heap[j] = s;
+}
+
+# 64 "AckQueue.h"
+static void *qACK_front(queueACK *q)
+#line 64
+{
+
+  void *d;
+
+
+
+  if (q->front == (void *)0) {
+      return (void *)0;
+    }
+
+
+  d = q->front->data;
+
+
+  q->front->attempt += 1;
+#line 90
+  return d;
 }
 
 # 53 "../../../tos/system/AMQueueEntryP.nc"
@@ -21866,15 +21876,15 @@ static uint16_t CC2420ControlP__CC2420Config__getShortAddr(void )
     __nesc_atomic_end(__nesc_atomic); }
 }
 
-# 140 "AckQueue.h"
+# 144 "AckQueue.h"
 static bool qACK_dequeue(queueACK *q, uint16_t targetID)
-#line 140
+#line 144
 {
   Node *temp = q->front;
   Node *curr = temp;
 
   if (temp == (void *)0) {
-#line 144
+#line 148
     return FALSE;
     }
   if (curr->msgID == targetID) {
@@ -22134,12 +22144,6 @@ static void CC2420ControlP__writeId(void )
   CC2420ControlP__IEEEADR__write(0, (uint8_t *)&id, 12);
 }
 
-# 154 "../../../tos/lib/timer/VirtualizeTimerC.nc"
-static void /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__Timer__startPeriodic(uint8_t num, uint32_t dt)
-{
-  /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__startTimer(num, /*HilTimerMilliC.VirtualizeTimerC*/VirtualizeTimerC__0__TimerFrom__getNow(), dt, FALSE);
-}
-
 # 81 "../../../tos/chips/cc2420/csma/CC2420CsmaP.nc"
 static error_t CC2420CsmaP__SplitControl__start(void )
 #line 81
@@ -22216,9 +22220,9 @@ static void /*BusyWaitMicroC.BusyWaitCounterC*/BusyWaitCounterC__0__BusyWait__wa
   }
 }
 
-# 124 "AckQueue.h"
+# 128 "AckQueue.h"
 static void qACK_init(queueACK *q)
-#line 124
+#line 128
 {
   q->front = (void *)0;
   q->rear = (void *)0;

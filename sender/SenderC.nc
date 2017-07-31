@@ -4,7 +4,7 @@
 #include <Timer.h>
 #include "AckQueue.h"
 
-#define TIMER_PERIOD_MILLI 50
+#define TIMER_PERIOD_MILLI 100
 #define ACKTIMER_PERIOD_MILLI 3000
 
 module SenderC {
@@ -28,11 +28,11 @@ implementation {
   message_t sensorPacket, dqiPacket, ackPacket;
   pqueue    nonPriorityBuffer, priorityBuffer;
   uint8_t   priorityCutoff;
-  uint16_t  currentReading, msgId, nextNextReading, nextReading,
-            prevPrevReading, prevReading, readingsIndex, ACKCounter;
+  uint16_t  currentReading, msgIdCounter, nextNextReading, nextReading,
+            prevPrevReading, prevReading, readingsIndex, ACKCounterDQI, ACKCounterSen;
 
   //ACK queues
-  queueACK* ACKQueue_DQI, *ACKQueue_Sensor;
+  queueACK ACKQueue_DQI, ACKQueue_Sensor;
 
 
   uint8_t calculatePriority();
@@ -50,7 +50,7 @@ implementation {
   event void Boot.booted() {
     // Initialize global variables
     currentReading  = 0;
-    msgId           = 1;
+    msgIdCounter           = 1;
     nextNextReading = jogDataX[1];
     nextReading     = jogDataX[0];
     prevPrevReading = 0;
@@ -58,17 +58,15 @@ implementation {
     priorityCutoff  = 1;
     radioBusy       = FALSE;
     readingsIndex   = 2;
-    ACKCounter      = 1;
+    ACKCounterDQI   = 1;
+    ACKCounterSen   = 0;
 
     // Initialize the buffers
     pq_init(&nonPriorityBuffer);
     pq_init(&priorityBuffer);
 
-    //initialize ACK queues
-    ACKQueue_DQI    = (queueACK*)malloc(sizeof(queueACK));
-    ACKQueue_Sensor = (queueACK*)malloc(sizeof(queueACK));
-    qACK_init(ACKQueue_DQI);
-    qACK_init(ACKQueue_Sensor);
+    qACK_init(&ACKQueue_DQI);
+    qACK_init(&ACKQueue_Sensor);
 
     // Initialize the DQI variables
     DQIInit();
@@ -87,14 +85,15 @@ implementation {
     SensorMsg* senMsg, *tempS;
     DQIMsg*    dqiMsg, *tempD;
 
+      if (ACKQueue_Sensor.count != 0) ACKCounterSen++;
+      if (ACKQueue_DQI.count != 0) ACKCounterDQI++;
+
     //if (ACKCounter % 2 == 0) {
       //check Sensor ACK queue
-      if (ACKQueue_Sensor->count != 0) {
-        attemptNum = qACK_frontAttempts(ACKQueue_Sensor);
-        tempS      = (SensorMsg*)qACK_front(ACKQueue_Sensor);
-        if (attemptNum < SEN_ATTEMPTS) {
-          qACK_enqueue(ACKQueue_Sensor, (void*)tempS, tempS->msgId, attemptNum + 1);
-        }
+      
+      if (ACKQueue_Sensor.count != 0 && ACKCounterSen % 5 == 0) {
+        attemptNum = qACK_frontAttempts(&ACKQueue_Sensor);
+        tempS      = (SensorMsg*)qACK_front(&ACKQueue_Sensor);
 
         senMsg = (SensorMsg*)
               call PacketSensor.getPayload(&sensorPacket, sizeof(SensorMsg));
@@ -123,18 +122,16 @@ implementation {
         }
 
         if (attemptNum >= SEN_ATTEMPTS) {
-          free(tempS);
+          qACK_pop(&ACKQueue_Sensor);
         }
       }
-    //}
+    //} 
    // else if (ACKCounter % 5 == 0) {
-      //check DQI ACK queue
-      if (ACKQueue_DQI->count != 0) {
-        attemptNum = qACK_frontAttempts(ACKQueue_DQI);
-        tempD      = (DQIMsg*)qACK_front(ACKQueue_DQI);
-        if (attemptNum < DQI_ATTEMPTS) {
-          qACK_enqueue(ACKQueue_DQI, (void*)tempD, tempD->msgId, attemptNum + 1);
-        }
+
+      //check DQI ACK queue 
+      if (ACKQueue_DQI.count != 0 && ACKCounterDQI % 10 == 0) {
+        attemptNum = qACK_frontAttempts(&ACKQueue_DQI);
+        tempD      = (DQIMsg*)qACK_front(&ACKQueue_DQI);
 
         dqiMsg = (DQIMsg*) call PacketDQI.getPayload(&dqiPacket, sizeof(DQIMsg));
 
@@ -161,7 +158,7 @@ implementation {
         }
 
         if (attemptNum >= DQI_ATTEMPTS) {
-          free(tempD);
+          qACK_pop(&ACKQueue_DQI);
         }
       }
     //}
@@ -190,14 +187,15 @@ implementation {
     randomNum = rand() % 10;
 
     // Decide which action to take
-    if (randomNum <= 6) {   // 70%
+    //if (randomNum <= 6) {   // 70%
       getReading();
-    }
-    else {                  // 30%
-      if (ACKQueue_Sensor->count != 0 || ACKQueue_DQI->count != 0) 
+   // }
+   // else {                  // 30%
+
+      if (ACKQueue_Sensor.count != 0 || ACKQueue_DQI.count != 0)
         ACKStart();
       sendSensorMsg();
-    }
+    //}
   }
 
   /*****************************************************************************
@@ -223,10 +221,10 @@ implementation {
       if (msg->sensorId == TOS_NODE_ID) {
         // Perform feedback
         if (msg->msgType == 0) {
-          qACK_dequeue(ACKQueue_DQI, msg->msgId);
+          qACK_dequeue(&ACKQueue_DQI, msg->msgId);
         }
         else if (msg->msgType == 1) {
-          qACK_dequeue(ACKQueue_Sensor, msg->msgId);
+          qACK_dequeue(&ACKQueue_Sensor, msg->msgId);
            
             //
         }
@@ -351,7 +349,7 @@ implementation {
   event void SplitControl.startDone(error_t error) {
     if (error == SUCCESS) {
       call Timer.startPeriodic(TIMER_PERIOD_MILLI);
-      call ACKTimer.startPeriodic(ACKTIMER_PERIOD_MILLI);
+      //call ACKTimer.startPeriodic(ACKTIMER_PERIOD_MILLI);
     }
     else {
       call SplitControl.start();
@@ -534,17 +532,10 @@ implementation {
       msg->values[i] = DQIValues[i];
     }
     msg->sensorId      = TOS_NODE_ID;
-    msg->msgId         = msgId++;
+    msg->msgId         = msgIdCounter++;
     msg->priorityCount = priorityCount;
     msg->startId       = DQIStartId;
     msg->endId         = DQIEndId;
-
-    // Transmit the message
-    error = call AMSendDQI.send(AM_BROADCAST_ADDR, &dqiPacket, sizeof(DQIMsg));
-    if (error == SUCCESS) {
-      radioBusy = TRUE;
-      call Leds.led2Toggle();
-    }
 
     //add the mesage to the ack queue
     msgACK = (DQIMsg*)malloc(sizeof(DQIMsg));
@@ -557,13 +548,16 @@ implementation {
     msgACK->startId       = msg->startId; 
     msgACK->endId         = msg->endId; 
 
-    //remove front if full
-    //TODO
-    //********NEED TO FREE THE MEMORY WHEN CALLING FRONT*****
-    if (ACKQueue_DQI->count == DQI_ACKQUEUE_SIZE) qACK_front(ACKQueue_DQI);
+    if (ACKQueue_DQI.count == DQI_ACKQUEUE_SIZE) qACK_pop(&ACKQueue_DQI);
 
-    qACK_enqueue(ACKQueue_DQI, (void*)msgACK, msg->msgId, 0);
+    qACK_enqueue(&ACKQueue_DQI, (void*)msgACK, msg->msgId, 0);    
 
+    // Transmit the message
+    error = call AMSendDQI.send(AM_BROADCAST_ADDR, &dqiPacket, sizeof(DQIMsg));
+    if (error == SUCCESS) {
+      radioBusy = TRUE;
+      call Leds.led2Toggle();
+    }
 
     // Reset the DQI variables
     DQIInit();
@@ -615,10 +609,31 @@ implementation {
 
     // Set the remaining fields of the message
     msg->sensorId = TOS_NODE_ID;
-    msg->msgId    = msgId++;
+    msg->msgId    = msgIdCounter++;
     msg->tag      = priority;
 
+    if (priority == 1) {
+
+      //add the mesage to the ack queue
+      msgACK = (SensorMsg*)malloc(sizeof(SensorMsg));
+      msgACK->sensorId      = msg->sensorId; 
+      msgACK->msgId         = msg->msgId;
+      msgACK->tag           = msg->tag; 
+      for (i = 0; i < 5; i++) {
+        msgACK->readings[i] = msg->readings[i];
+        msgACK->times[i]    = msg->times[i];
+      }
+
+      //remove front if full
+      //TODO
+      //********NEED TO FREE THE MEMORY WHEN CALLING FRONT*****
+      if (ACKQueue_Sensor.count == SEN_ACKQUEUE_SIZE) qACK_pop(&ACKQueue_Sensor);
+
+      qACK_enqueue(&ACKQueue_Sensor, (void*)msgACK, msg->msgId, 0);
+    }
+
     // Transmit the message
+    
     error = call AMSendSensor.send
             (AM_BROADCAST_ADDR, &sensorPacket, sizeof(SensorMsg));
     if (error == SUCCESS) {
@@ -626,23 +641,6 @@ implementation {
       call Leds.led1Toggle();
     }
 
-    if (priority != 1) return;
 
-    //add the mesage to the ack queue
-    msgACK = (SensorMsg*)malloc(sizeof(SensorMsg));
-    msgACK->sensorId      = msg->sensorId; 
-    msgACK->msgId         = msg->msgId;
-    msgACK->tag           = msg->tag; 
-    for (i = 0; i < 5; i++) {
-      msgACK->readings[i] = msg->readings[i];
-      msgACK->times[i]    = msg->times[i];
-    }
-
-    //remove front if full
-    //TODO
-    //********NEED TO FREE THE MEMORY WHEN CALLING FRONT*****
-    if (ACKQueue_Sensor->count == SEN_ACKQUEUE_SIZE) qACK_front(ACKQueue_Sensor);
-
-    qACK_enqueue(ACKQueue_Sensor, (void*)msgACK, msg->msgId, 0);
   }
 }
