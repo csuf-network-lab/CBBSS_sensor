@@ -16,8 +16,12 @@ module ReceiverC {
     interface AMPacket     as RadioAMPacketFeedback;
     interface AMSend       as RadioSendFeedback;
     interface Packet       as RadioPacketFeedback;
+    interface AMPacket     as RadioAMPacketACK;
+    interface AMSend       as RadioSendACK;
+    interface Packet       as RadioPacketACK;
     interface Receive      as RadioReceiveDQI;
     interface Receive      as RadioReceiveSensor;
+    interface Receive      as RadioReceiveACK;
     interface SplitControl as RadioControl;
   }
 
@@ -25,24 +29,31 @@ module ReceiverC {
   uses {
     interface AMPacket     as SerialAMPacketDQI;
     interface AMPacket     as SerialAMPacketSensor;
+    interface AMPacket     as SerialAMPacketACK;
     interface AMSend       as SerialSendDQI;
     interface AMSend       as SerialSendSensor;
+    interface AMSend       as SerialSendACK;
     interface Packet       as SerialPacketDQI;
     interface Packet       as SerialPacketSensor;
+    interface Packet       as SerialPacketACK;
     interface Receive      as SerialReceiveFeedback;
+    interface Receive      as SerialReceiveACK;
     interface SplitControl as SerialControl;
   }
 }
 
 implementation {
   bool        radioBusy, serialBusy;
-  message_t   packetDQI, packetFeedback, packetSensor;
+  message_t   packetDQI, packetFeedback, packetSensor, packetACKtoPC, packetACKtoSensor;
   queueDQI    bufferDQI;
   queueSensor bufferSensor;
+  queueACK    bufferACK;
 
   void sendDQIMsg();
   void sendFeedbackMsg(FeedbackMsg*);
   void sendSensorMsg();
+  void sendACKtoPC();
+  void sendACKtoSensor(ACKMsg*);
 
   /*****************************************************************************
   * The starting point of the program. Starts the controllers, which in turn,
@@ -56,6 +67,7 @@ implementation {
     // Initialize the buffers
     qDQI_init(&bufferDQI);
     qSensor_init(&bufferSensor);
+    qACK_init(&bufferACK);
 
     // Start the controllers
     call RadioControl.start();
@@ -65,18 +77,23 @@ implementation {
   /*****************************************************************************
   * This event is triggered every time the allotted, specified time interval has
   * elapsed. Calls the serial transmission of any messages in the buffers.
-  * Priority is given to DQI messages.
+  * Priority is given to ACK messages.
   *****************************************************************************/
   event void Timer.fired() {
-    // Transmit a DQI message if the DQI buffer is not empty
-    if (!qDQI_isEmpty(&bufferDQI)) {
+
+    //transmit a ACK message if the ACK buffer is not empty
+    if (!qACK_isEmpty(&bufferACK)) {
+      sendACKtoPC();
+    }
+    // Otherwise, transmit a DQI message if the DQI buffer is not empty
+    else if (!qDQI_isEmpty(&bufferDQI)) {
       sendDQIMsg();
     }
-
     // Otherwise, transmit a sensor message if the sensor buffer is not empty
     else if (!qSensor_isEmpty(&bufferSensor)) {
       sendSensorMsg();
     }
+
   }
 
   /*****************************************************************************
@@ -140,6 +157,37 @@ implementation {
     return message;
   }
 
+    /*****************************************************************************
+  * This event is triggered every time the receiver receives a ACK message.
+  * Stores the message into a buffer for serial transmission.
+  *
+  * @params
+  *   message - ?
+  *   payload - ?
+  *   length  - ?
+  *
+  * @out
+  *****************************************************************************/
+  event message_t*
+  RadioReceiveACK.receive(message_t* message, void* payload, uint8_t length) {
+    ACKMsg* msg;
+
+    // Ensure it's a ACK message
+    if (length == sizeof(ACKMsg)) {
+      // Cast the payload to the correct data type
+      msg = (ACKMsg*) payload;
+
+      // Add it to the buffer
+      qACK_enqueue(&bufferACK, *msg);
+
+      // Toggle the green LED
+      call Leds.led1Toggle();
+    }
+
+    // Done
+    return message;
+  }
+
   /*****************************************************************************
   * This event is triggered every time the receiver receives a feedback message.
   * Sends the feedback message through the radio.
@@ -171,6 +219,36 @@ implementation {
   }
 
   /*****************************************************************************
+  * This event is triggered every time the receiver receives a ACK message.
+  * Sends the ACK message through the radio.
+  *
+  * @params
+  *   message - ?
+  *   payload - ?
+  *   length  - ?
+  *
+  * @out
+  *****************************************************************************/
+  event message_t*
+  SerialReceiveACK.receive(message_t* message, void* payload, uint8_t length) {
+    ACKMsg* msg;
+
+    // Ensure it's a ACK message
+    if (length == sizeof(ACKMsg)) {
+      // Cast the payload to the correct data type
+      msg = (ACKMsg*) payload;
+
+      // Send the feedback message if the radio is not busy
+      if (!radioBusy) {
+        sendACKtoSensor(msg);
+      }
+    }
+
+    // Done
+    return message;
+  }
+
+  /*****************************************************************************
   * This event is triggered every time the active message sender for feedback
   * messages has finished sending a packet through the radio. Updates the busy
   * flag to false so other components can use the radio.
@@ -181,6 +259,22 @@ implementation {
   *****************************************************************************/
   event void RadioSendFeedback.sendDone(message_t* message, error_t error) {
     if (message == &packetFeedback) {
+      radioBusy = FALSE;
+      call Leds.led0Toggle();
+    }
+  }
+
+  /*****************************************************************************
+  * This event is triggered every time the active message sender for ACK
+  * messages has finished sending a packet through the radio. Updates the busy
+  * flag to false so other components can use the radio.
+  *
+  * @params
+  *   message - ?
+  *   error   - ?
+  *****************************************************************************/
+  event void RadioSendACK.sendDone(message_t* message, error_t error) {
+    if (message == &packetACKtoSensor) {
       radioBusy = FALSE;
       call Leds.led0Toggle();
     }
@@ -213,6 +307,22 @@ implementation {
   *****************************************************************************/
   event void SerialSendSensor.sendDone(message_t* message, error_t error) {
     if (message == &packetSensor) {
+      serialBusy = FALSE;
+      call Leds.led2Toggle();
+    }
+  }
+
+  /*****************************************************************************
+  * This event is triggered every time the active message sender for ACK
+  * messages has finished sending a packet through the serial port. Updates the
+  * busy flag to false so other components can use the serial port.
+  *
+  * @params
+  *   message - ?
+  *   error   - ?
+  *****************************************************************************/
+  event void SerialSendACK.sendDone(message_t* message, error_t error) {
+    if (message == &packetACKtoPC) {
       serialBusy = FALSE;
       call Leds.led2Toggle();
     }
@@ -341,7 +451,7 @@ implementation {
 
     // Copy the fields
     msgSend->sensorId = msgReceive->sensorId;
-    msgSend->feedback = msgReceive->feedback;
+    msgSend->dropCount = msgReceive->dropCount;
 
     // Transmit the message
     error = call RadioSendFeedback.send
@@ -394,6 +504,74 @@ implementation {
     if (error == SUCCESS) {
       serialBusy = TRUE;
       call Leds.led2Toggle();
+    }
+  }
+
+  /*****************************************************************************
+  * Transmits the ACK message at the front of the ACK buffer to the serial port.
+  *****************************************************************************/
+  void sendACKtoPC() {
+    ACKMsg  *msgSend, msgReceive;
+    error_t error;
+    uint8_t i;
+
+    // Do not transmit if the serial port is already busy
+    if (serialBusy) {
+      return;
+    }
+
+    // Get a reference to the DQI packet
+    msgSend = (ACKMsg*)
+              call SerialPacketACK.getPayload(&packetACKtoPC, sizeof(ACKMsg));
+
+    // Ensure the reference is valid
+    if (msgSend == NULL) {
+      return;
+    }
+
+    // Grab the DQI message to send from the front of the buffer
+    msgReceive = qACK_dequeue(&bufferACK);
+
+    // Copy the fields
+    msgSend->sensorId      = msgReceive.sensorId;
+    msgSend->msgId         = msgReceive.msgId;
+    msgSend->msgType       = msgReceive.msgType;
+
+    // Transmit the message
+    error = call SerialSendACK.send
+            (AM_BROADCAST_ADDR, &packetACKtoPC, sizeof(ACKMsg));
+    if (error == SUCCESS) {
+      serialBusy = TRUE;
+      call Leds.led2Toggle();
+    }
+  }
+
+  /*****************************************************************************
+  * Broadcasts the ACK message through the radio.
+  *****************************************************************************/
+  void sendACKtoSensor(ACKMsg* msgReceive) {
+    error_t     error;
+    ACKMsg      *msgSend;
+
+    // Get a reference to the feedback packet
+    msgSend = (ACKMsg*) call RadioPacketACK.getPayload(&packetACKtoSensor, sizeof(ACKMsg));
+
+    // Ensure the reference is valid
+    if (msgSend == NULL) {
+      return;
+    }
+
+    // Copy the fields
+    msgSend->sensorId      = msgReceive->sensorId;
+    msgSend->msgId         = msgReceive->msgId;
+    msgSend->msgType       = msgReceive->msgType;
+
+    // Transmit the message
+    error = call RadioSendACK.send
+            (AM_BROADCAST_ADDR, &packetACKtoSensor, sizeof(ACKMsg));
+    if (error == SUCCESS) {
+      radioBusy = TRUE;
+      call Leds.led0Toggle();
     }
   }
 }

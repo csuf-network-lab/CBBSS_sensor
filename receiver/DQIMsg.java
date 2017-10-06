@@ -7,12 +7,12 @@
 public class DQIMsg extends net.tinyos.message.Message {
 
     /** The default size of this message type in bytes. */
-    public static final int DEFAULT_MESSAGE_SIZE = 20;
+    public static final int DEFAULT_MESSAGE_SIZE = 21;
 
     /** The Active Message type associated with this message. */
-    public static final int AM_TYPE = 0;
+    public static final int AM_TYPE = 1;
 
-    /** Create a new DQIMsg of size 20. */
+    /** Create a new DQIMsg of size 21. */
     public DQIMsg() {
         super(DEFAULT_MESSAGE_SIZE);
         amTypeSet(AM_TYPE);
@@ -98,6 +98,9 @@ public class DQIMsg extends net.tinyos.message.Message {
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
         s += "  [endId=0x"+Long.toHexString(get_endId())+"]\n";
+      } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
+      try {
+        s += "  [priorityCutoff=0x"+Long.toHexString(get_priorityCutoff())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
         s += "  [values=";
@@ -427,9 +430,72 @@ public class DQIMsg extends net.tinyos.message.Message {
     }
 
     /////////////////////////////////////////////////////////
+    // Accessor methods for field: priorityCutoff
+    //   Field type: short, unsigned
+    //   Offset (bits): 80
+    //   Size (bits): 8
+    /////////////////////////////////////////////////////////
+
+    /**
+     * Return whether the field 'priorityCutoff' is signed (false).
+     */
+    public static boolean isSigned_priorityCutoff() {
+        return false;
+    }
+
+    /**
+     * Return whether the field 'priorityCutoff' is an array (false).
+     */
+    public static boolean isArray_priorityCutoff() {
+        return false;
+    }
+
+    /**
+     * Return the offset (in bytes) of the field 'priorityCutoff'
+     */
+    public static int offset_priorityCutoff() {
+        return (80 / 8);
+    }
+
+    /**
+     * Return the offset (in bits) of the field 'priorityCutoff'
+     */
+    public static int offsetBits_priorityCutoff() {
+        return 80;
+    }
+
+    /**
+     * Return the value (as a short) of the field 'priorityCutoff'
+     */
+    public short get_priorityCutoff() {
+        return (short)getUIntBEElement(offsetBits_priorityCutoff(), 8);
+    }
+
+    /**
+     * Set the value of the field 'priorityCutoff'
+     */
+    public void set_priorityCutoff(short value) {
+        setUIntBEElement(offsetBits_priorityCutoff(), 8, value);
+    }
+
+    /**
+     * Return the size, in bytes, of the field 'priorityCutoff'
+     */
+    public static int size_priorityCutoff() {
+        return (8 / 8);
+    }
+
+    /**
+     * Return the size, in bits, of the field 'priorityCutoff'
+     */
+    public static int sizeBits_priorityCutoff() {
+        return 8;
+    }
+
+    /////////////////////////////////////////////////////////
     // Accessor methods for field: values
     //   Field type: int[], unsigned
-    //   Offset (bits): 80
+    //   Offset (bits): 88
     //   Size of each element (bits): 16
     /////////////////////////////////////////////////////////
 
@@ -451,7 +517,7 @@ public class DQIMsg extends net.tinyos.message.Message {
      * Return the offset (in bytes) of the field 'values'
      */
     public static int offset_values(int index1) {
-        int offset = 80;
+        int offset = 88;
         if (index1 < 0 || index1 >= 5) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 16;
         return (offset / 8);
@@ -461,7 +527,7 @@ public class DQIMsg extends net.tinyos.message.Message {
      * Return the offset (in bits) of the field 'values'
      */
     public static int offsetBits_values(int index1) {
-        int offset = 80;
+        int offset = 88;
         if (index1 < 0 || index1 >= 5) throw new ArrayIndexOutOfBoundsException();
         offset += 0 + index1 * 16;
         return offset;

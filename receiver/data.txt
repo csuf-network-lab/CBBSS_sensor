@@ -1,0 +1,28 @@
+DQIMsg received:
+	sensorId = 1
+	msgId = 40
+	priority count = 93
+	startId = 0
+	endId = 199
+	values = [ 19.913 7.597 3.515 0.0 ]
+
+DQIMsg received:
+	sensorId = 1
+	msgId = 81
+	priority count = 85
+	startId = 200
+	endId = 399
+	values = [ 21.128 7.0 2.398 0.0 ]
+
+estimate1.085607289719626 
+
+DQIMsg received:
+	sensorId = 1
+	msgId = 122
+	priority count = 80
+	startId = 400
+	endId = 599
+	values = [ 23.494 9.201 5.028 0.0 ]
+
+estimate1.0771631304347826 
+

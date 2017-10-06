@@ -10,7 +10,7 @@ public class SensorMsg extends net.tinyos.message.Message {
     public static final int DEFAULT_MESSAGE_SIZE = 25;
 
     /** The Active Message type associated with this message. */
-    public static final int AM_TYPE = 2;
+    public static final int AM_TYPE = 3;
 
     /** Create a new SensorMsg of size 25. */
     public SensorMsg() {

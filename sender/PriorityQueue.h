@@ -80,6 +80,7 @@ bool pq_isEmpty(pqueue* p) {
 *******************************************************************************/
 sample pq_pop(pqueue* p) {
   sample s;
+  int i;
 
   // Cannot pop from an empty priority queue
   if (pq_isEmpty(p)) {
@@ -92,14 +93,16 @@ sample pq_pop(pqueue* p) {
   // Save the data at the front
   s = p->heap[1];
 
+  for (i = 1; i < PQUEUE_SIZE; i++) p->heap[i] = p->heap[i+1];
+
   // Move the last node to the front
-  pq_exchange(p, 1, p->length);
+  //pq_exchange(p, 1, p->length);
 
   // Decrease the length
   p->length--;
 
   // Enforce the order
-  pq_sink(p, 1);
+  //pq_sink(p, 1);
 
   // Return
   return s;
@@ -126,7 +129,7 @@ void pq_push(pqueue* p, sample s) {
   p->heap[p->length] = s;
 
   // Enforce the order
-  pq_swim(p, p->length);
+  //pq_swim(p, p->length);
 }
 
 /*******************************************************************************

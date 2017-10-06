@@ -10,7 +10,7 @@ public class FeedbackMsg extends net.tinyos.message.Message {
     public static final int DEFAULT_MESSAGE_SIZE = 4;
 
     /** The Active Message type associated with this message. */
-    public static final int AM_TYPE = 1;
+    public static final int AM_TYPE = 2;
 
     /** Create a new FeedbackMsg of size 4. */
     public FeedbackMsg() {
@@ -88,7 +88,7 @@ public class FeedbackMsg extends net.tinyos.message.Message {
         s += "  [sensorId=0x"+Long.toHexString(get_sensorId())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
-        s += "  [feedback=0x"+Long.toHexString(get_feedback())+"]\n";
+        s += "  [dropCount=0x"+Long.toHexString(get_dropCount())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       return s;
     }
@@ -159,65 +159,65 @@ public class FeedbackMsg extends net.tinyos.message.Message {
     }
 
     /////////////////////////////////////////////////////////
-    // Accessor methods for field: feedback
+    // Accessor methods for field: dropCount
     //   Field type: int, unsigned
     //   Offset (bits): 16
     //   Size (bits): 16
     /////////////////////////////////////////////////////////
 
     /**
-     * Return whether the field 'feedback' is signed (false).
+     * Return whether the field 'dropCount' is signed (false).
      */
-    public static boolean isSigned_feedback() {
+    public static boolean isSigned_dropCount() {
         return false;
     }
 
     /**
-     * Return whether the field 'feedback' is an array (false).
+     * Return whether the field 'dropCount' is an array (false).
      */
-    public static boolean isArray_feedback() {
+    public static boolean isArray_dropCount() {
         return false;
     }
 
     /**
-     * Return the offset (in bytes) of the field 'feedback'
+     * Return the offset (in bytes) of the field 'dropCount'
      */
-    public static int offset_feedback() {
+    public static int offset_dropCount() {
         return (16 / 8);
     }
 
     /**
-     * Return the offset (in bits) of the field 'feedback'
+     * Return the offset (in bits) of the field 'dropCount'
      */
-    public static int offsetBits_feedback() {
+    public static int offsetBits_dropCount() {
         return 16;
     }
 
     /**
-     * Return the value (as a int) of the field 'feedback'
+     * Return the value (as a int) of the field 'dropCount'
      */
-    public int get_feedback() {
-        return (int)getUIntBEElement(offsetBits_feedback(), 16);
+    public int get_dropCount() {
+        return (int)getUIntBEElement(offsetBits_dropCount(), 16);
     }
 
     /**
-     * Set the value of the field 'feedback'
+     * Set the value of the field 'dropCount'
      */
-    public void set_feedback(int value) {
-        setUIntBEElement(offsetBits_feedback(), 16, value);
+    public void set_dropCount(int value) {
+        setUIntBEElement(offsetBits_dropCount(), 16, value);
     }
 
     /**
-     * Return the size, in bytes, of the field 'feedback'
+     * Return the size, in bytes, of the field 'dropCount'
      */
-    public static int size_feedback() {
+    public static int size_dropCount() {
         return (16 / 8);
     }
 
     /**
-     * Return the size, in bits, of the field 'feedback'
+     * Return the size, in bits, of the field 'dropCount'
      */
-    public static int sizeBits_feedback() {
+    public static int sizeBits_dropCount() {
         return 16;
     }
 
